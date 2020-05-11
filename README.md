@@ -14,7 +14,8 @@ $ sudo apt update && sudo apt upgrade -y && sudo install git ansible -y
 
 Clone this repo:
 ```
-$ git clone XYZ
+$ git clone https://github.com/tna76874/hdhweg-homeschooling-stack.git
+$ cd hdhweg-homeschooling-stack
 ```
 
 Create the playbook-variable-file.
