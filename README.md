@@ -25,7 +25,7 @@ $ cp vars.yml.example vars.yml
 
 **Remove the ssh-keys inside the file `vars.yml` to prevent ssh access of the listed users.**
 
-Set the variable `letsencrypt_email` to your mailadress. You don't want your students to have bad warning messages on your nice websites onve your letsencrypt certificates expired.
+Set the variable `letsencrypt_email` to your mailadress. You don't want your students to have bad warning messages on your nice websites once your letsencrypt certificates expired.
 
 Set `main_domain` to the domain that points at your VM. Be sure, that the subdomains `chat`, `tafel`, `jitsi`, `cryptpad` and `mumble` also points to your VM.
 
