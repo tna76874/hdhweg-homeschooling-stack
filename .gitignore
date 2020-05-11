@@ -1,0 +1,5 @@
+vars.yml
+*.retry
+tmp/
+!tmp/.gitkeep
+vault_password

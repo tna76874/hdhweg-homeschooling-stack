@@ -1,0 +1,15 @@
+---
+- name: restart sshd
+  service:
+    name: sshd
+    state: restarted
+
+- name: restart ufw
+  service:
+    name: ufw
+    state: restarted
+
+- name: restart fail2ban
+  service:
+    name: fail2ban
+    state: restarted

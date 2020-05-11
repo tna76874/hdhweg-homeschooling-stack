@@ -1,0 +1,16 @@
+version: '3.1'
+services:
+  mumble:
+    image: sudoforge/mumble-server:latest
+    restart: always
+    ports:
+      - '${TCPPORT}:64738/tcp'
+      - '${UDPPORT}:64738/udp'
+    environment:
+      - SUPERUSER_PASSWORD=${SUPERUSER_PASSWORD}
+      - MUMBLE_ENABLESSL=1
+      - MUMBLE_ALLOWPING=false
+      - MUMBLE_USERS=${USERS}
+      - MUMBLE_REGISTERNAME=${SERVERNAME}
+    volumes:
+      - ./data:/data

@@ -1,0 +1,10 @@
+version: '3.1'
+services:
+  whiteboard:
+    image: rofl256/whiteboard
+    restart: always
+    ports:
+      - ${TCPPORT}:8080/tcp
+    environment:
+#      - accesstoken=${accesstoken}
+      - NODE_OPTIONS=${NODE_OPTIONS}

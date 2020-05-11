@@ -1,0 +1,48 @@
+---
+- name: Ensure git and docker-compose is available
+  apt:
+    name:
+    - git
+    - docker-compose
+    - docker
+    state: present
+
+- name: Create user
+  user:
+    name: cryptpad
+    shell: /bin/bash
+    password: '!'
+    update_password: on_create
+    groups: docker
+    state: present
+
+- name: Ensure base / data directories for whiteboard exist
+  file:
+    path: "{{ item.path }}"
+    owner: "{{ item.owner }}"
+    state: directory
+  loop:
+    - { path: "/srv/cryptpad", owner: "cryptpad" }
+    - { path: "/srv/cryptpad/data/config", owner: "999" }
+
+- name: Ensure docker-compose.yml for cryptpad
+  template:
+    src: docker-compose.j2
+    dest: "/srv/cryptpad/docker-compose.yml"
+
+- name: Ensure environment file
+  template:
+    src: env.j2
+    dest: "/srv/cryptpad/.env"
+
+- name: Ensure cryptpad config file
+  template:
+    src: config.js
+    dest: "/srv/cryptpad/data/config/config.js"
+
+- name: Ensure cryptpad nginx conf is present
+  template:
+    src: cryptpad.nginx
+    dest: "/etc/nginx/{{ nginx_domain_name }}.d/cryptpad.conf"
+    #    notify: reload nginx
+

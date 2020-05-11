@@ -1,0 +1,63 @@
+---
+- name: Ensure git and docker-compose is available
+  apt:
+    name:
+    - git
+    - docker-compose
+    - docker
+    state: present
+
+- name: Create user
+  user:
+    name: mumble
+    shell: /bin/bash
+    password: '!'
+    update_password: on_create
+    groups: docker
+    state: present
+
+- name: Ensure base / data directories for whiteboard exist
+  file:
+    path: "{{ item.path }}"
+    owner: "{{ item.owner }}"
+    state: directory
+  loop:
+    - { path: "/srv/mumble", owner: "mumble" }
+
+- name: Ensure docker-compose.yml for mumble
+  template:
+    src: docker-compose.j2
+    dest: "/srv/mumble/docker-compose.yml"
+
+- name: Ensure environment file
+  template:
+    src: env.j2
+    dest: "/srv/mumble/.env"
+
+- name: Ensure mumble install script
+  template:
+    src: install.sh
+    dest: "/srv/mumble/install.sh"
+    mode: 0777
+
+- name: Ensure mumble getcert.sh script
+  template:
+    src: getcert.sh
+    dest: "/srv/mumble/getcert.sh"
+    mode: 0777
+
+- name: Ensure mumble updatecert.sh script
+  template:
+    src: updatecert.sh
+    dest: "/srv/mumble/updatecert.sh"
+    mode: 0777
+
+- name: Ensure mumble ufw_rules
+  template:
+    src: ufw_mumble
+    dest: "/srv/mumble/ufw_mumble"
+
+- name: Ensure mumble welcometext file
+  template:
+    src: welcometext
+    dest: "/srv/mumble/welcometext"

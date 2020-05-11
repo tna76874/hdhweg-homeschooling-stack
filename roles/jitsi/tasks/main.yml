@@ -1,0 +1,53 @@
+---
+- name: Ensure git and docker-compose is available
+  apt:
+    name:
+    - git
+    - docker-compose
+    - docker
+    state: present
+
+- name: Create user
+  user:
+    name: jitsi
+    shell: /bin/bash
+    password: '!'
+    update_password: on_create
+    groups: docker
+    state: present
+
+- name: Ensure base / data directories for whiteboard exist
+  file:
+    path: "{{ item.path }}"
+    owner: "{{ item.owner }}"
+    state: directory
+  loop:
+    - { path: "/srv/jitsi", owner: "jitsi" }      
+
+- name: Ensure docker-compose.yml for jitsi
+  template:
+    src: docker-compose.j2
+    dest: "/srv/jitsi/docker-compose.yml"
+
+- name: Ensure environment file
+  template:
+    src: env.j2
+    dest: "/srv/jitsi/.env"
+
+- name: Ensure jitsi web config file
+  template:
+    src: interface_config.js
+    dest: "/srv/jitsi/interface_config.js"
+
+- name: Ensure environment file
+  template:
+    src: install.sh
+    dest: "/srv/jitsi/install.sh"
+    mode: 0777
+
+- name: Ensure jitsi nginx conf is present
+  template:
+    src: jitsi.nginx
+    dest: "/etc/nginx/{{ nginx_domain_name }}.d/jitsi.conf"
+    #    notify: reload nginx
+

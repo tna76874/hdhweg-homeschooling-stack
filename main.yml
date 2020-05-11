@@ -1,0 +1,105 @@
+---
+- name: Basic Setup
+  hosts: localhost
+  become: yes
+  tags:
+    - base
+  vars_files:
+    - vars.yml
+  roles:
+    - base
+
+- name: Rocketchat
+  hosts: localhost
+  become: yes
+  vars_files:
+    - vars.yml
+  tags:
+    - rocketchat
+  vars:
+    nginx_domain_name: "chat.{{ main_domain }}"
+  roles:
+    - nginx
+    - nginx-tls-add
+    - docker
+    - rocketchat
+
+- name: Whiteboard
+  hosts: localhost
+  become: yes
+  vars_files:
+    - vars.yml
+  tags:
+    - whiteboard
+  vars:
+    nginx_domain_name: "tafel.{{ main_domain }}"
+  roles:
+    - nginx
+    - nginx-tls-add
+    - docker
+    - whiteboard
+
+- name: Jitsi
+  hosts: localhost
+  become: yes
+  vars_files:
+    - vars.yml
+  tags:
+    - jitsi
+  vars:
+    nginx_domain_name: "jitsi.{{ main_domain }}"
+  roles:
+    - nginx
+    - nginx-tls-add
+    - docker
+    - jitsi
+
+- name: Cryptpad
+  hosts: localhost
+  become: yes
+  vars_files:
+    - vars.yml
+  tags:
+    - cryptpad
+  vars:
+    nginx_domain_name: "cryptpad.{{ main_domain }}"
+  roles:
+    - nginx
+    - nginx-tls-add
+    - docker
+    - cryptpad
+
+- name: Mumble
+  hosts: localhost
+  become: yes
+  vars_files:
+    - vars.yml
+  tags:
+    - mumble
+  vars:
+    domain_name: "mumble.{{ main_domain }}"
+  roles:
+    - docker
+    - mumble
+
+- name: Watchtower
+  hosts: localhost
+  become: yes
+  vars_files:
+    - vars.yml
+  tags:
+    - watchtower
+  roles:
+    - docker
+    - watchtower
+
+- name: Start the most important docker containers
+  hosts: localhost
+  become: yes
+  vars_files:
+    - vars.yml
+  tags:
+    - startdockers
+  roles:
+    - docker
+    - dockercomposeup

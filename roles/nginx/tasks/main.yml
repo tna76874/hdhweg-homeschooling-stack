@@ -1,0 +1,67 @@
+---
+- name: Ensure nginx ppa is used for newer nginx versions
+  apt_repository:
+    repo: ppa:nginx/stable
+  register: nginx_repo
+
+- name: Ensure nginx from ppa is pinned
+  copy:
+    content: |
+      Package: *
+      Pin: release n=xenial,o=LP-PPA-nginx-stable
+      Pin-Priority: 1000
+    dest: /etc/apt/preferences.d/ppa-nginx
+    mode: 0755
+  register: nginx_ppa_pin
+
+- name: Ensure apt cache gets updated
+  apt:
+    update_cache: yes
+  when: nginx_repo.changed or nginx_ppa_pin.changed
+
+- name: Ensure nginx installed
+  apt:
+    name: nginx
+    state: present
+
+- name: Ensure nginx from ppa is really installed
+  apt:
+    name: nginx
+    state: latest
+  when: nginx_repo.changed or nginx_ppa_pin.changed
+
+- name: Ensure nginx ufw configuration is available
+  copy:
+    # this is the standard config from the nginx package(?)
+    # space character in the rule name is not that nice, but whatever
+    content: |
+      [Nginx HTTP]
+      title=Web Server (Nginx, HTTP)
+      description=Small, but very powerful and efficient web server
+      ports=80/tcp
+
+      [Nginx HTTPS]
+      title=Web Server (Nginx, HTTPS)
+      description=Small, but very powerful and efficient web server
+      ports=443/tcp
+
+      [Nginx Full]
+      title=Web Server (Nginx, HTTP + HTTPS)
+      description=Small, but very powerful and efficient web server
+      ports=80,443/tcp
+    mode: 0644
+    dest: /etc/ufw/applications.d/nginx
+
+- name: Allow nginx in ufw
+  ufw:
+    rule: allow
+    name: Nginx Full
+    state: enabled
+
+- name: Ensure nginx configuration contains log format with request id
+  lineinfile:
+    line: "log_format cri '$remote_addr - $remote_user [$time_local] \"$request\" $status $body_bytes_sent \"$http_referer\" \"$http_user_agent\" request_id=$request_id';"
+    insertbefore: '^\s*access_log'
+    path: /etc/nginx/nginx.conf
+    # validate: '/usr/sbin/nginx -t -c %s'
+  notify: reload nginx
