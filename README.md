@@ -2,7 +2,7 @@
 
 ### Acknowledgement
 
-Thanks to the ZSL,  [Ulm](https://github.com/stadtulm/a13-ansible)  and [https://codeberg.org/DigitalSouveraeneSchule/bbb.git](https://codeberg.org/DigitalSouveraeneSchule/bbb.git) for their great ansible playbooks, the plabook of this repo is based on.
+Thanks to the ZSL,  [Ulm](https://github.com/stadtulm/a13-ansible)  and [https://codeberg.org/DigitalSouveraeneSchule/bbb.git](https://codeberg.org/DigitalSouveraeneSchule/bbb.git) for their great ansible playbooks. The playbook of this repo is basing on these repos.
 
 ### Prepare
 
