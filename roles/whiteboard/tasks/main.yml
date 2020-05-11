@@ -39,4 +39,11 @@
     src: whiteboard.nginx
     dest: "/etc/nginx/{{ nginx_domain_name }}.d/whiteboard.conf"
     #    notify: reload nginx
-
+    
+- cron:
+    name: "Cronjob restart whiteboard"
+    minute: "30"
+    hour: "02"
+    job: "(cd /srv/whiteboard; /usr/bin/docker-compose down; /usr/bin/docker-compo$
+    user: root
+    state: present
