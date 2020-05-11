@@ -9,7 +9,7 @@ Thanks to the ZSL,  [Ulm](https://github.com/stadtulm/a13-ansible)  and [https:/
 Update your fresh VM and install git and ansible.
 
 ```
-$ sudo apt update && sudo apt upgrade -y && sudo install git ansible -y
+$ sudo apt update && sudo install git ansible -y
 ```
 
 Clone this repo:
@@ -34,10 +34,10 @@ Set `main_domain` to the domain that points at your VM. Be sure, that the subdom
 Run the playbook to fully set up your server.
 
 ```
-ansible-playbook main.yml
+$ sudo ansible-playbook main.yml
 ```
 
-As default, cryptpad, jitsi and the whiteboard gets started by the playbook. Also a watchtower instance keeps these docker-images up-to-date.
+As default, cryptpad, jitsi and the whiteboard gets started by the playbook. Also a watchtower instance keeps these docker-images up-to-date. Every night the whiteboard-docker gets restarted via cron.
 
 If you want, you can start rocketchat, and mumble by entering the directorys in  `/srv/`.
 
