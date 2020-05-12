@@ -12,15 +12,11 @@ Thanks to the ZSL/LFB and Ulm for their great ansible playbooks. The playbook of
 
 Check out these repos as well:
 
-[https://github.com/stadtulm/a13-ansible](https://github.com/stadtulm/a13-ansible) 
-: A BigBlueButton-cluster with Prometheus monitoring and Greenlight frontend.
-
-[https://github.com/verschwoerhaus/ansible-bbb-cluster](https://github.com/verschwoerhaus/ansible-bbb-cluster) 
-: A *small scale* BigBlueButton-cluster with Prometheus monitoring.
-
-[https://codeberg.org/DigitalSouveraeneSchule/bbb.git](https://codeberg.org/DigitalSouveraeneSchule/bbb.git)
-: The BigBlueButton-cluster of the ZSL/LFB accessed by a moodle-frontend.
-
+| Repo 	| Description 	|
+|---	|-----------------------------------------------------------------------------	|
+| [Ulm](https://github.com/stadtulm/a13-ansible)  	| A BigBlueButton-cluster with Prometheus monitoring and Greenlight frontend. 	|
+| [Ulm](https://github.com/verschwoerhaus/ansible-bbb-cluster)  	| A *small scale* BigBlueButton-cluster with Prometheus monitoring.           	|
+| [ZSL/LFB](https://codeberg.org/DigitalSouveraeneSchule/bbb.git) 	| The BigBlueButton-cluster of the ZSL/LFB accessed by a moodle-frontend.     	|
 
 ### Requirements
 
@@ -66,10 +62,10 @@ If you want, you can start rocketchat, and mumble by entering the directorys in 
 
 ### To-Do
 
-* adding a simple mailserver to the stack
-* restructure the mumble setup
-* implementing some other roles from the ZSL/LFB playbook
-* ...
+- [] adding a simple mailserver to the stack
+- [] restructure the mumble setup
+- [] implementing some other roles from the ZSL/LFB playbook
+- [] ...
 
 ### Questions
 
