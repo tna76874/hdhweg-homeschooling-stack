@@ -44,6 +44,6 @@
     name: "Cronjob restart whiteboard"
     minute: "30"
     hour: "02"
-    job: "(cd /srv/whiteboard; /usr/bin/docker-compose down; /usr/bin/docker-compo$
+    job: "(cd /srv/whiteboard; /usr/bin/docker-compose down; /usr/bin/docker-compose up -d)&"
     user: root
     state: present
