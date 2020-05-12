@@ -34,10 +34,20 @@
     src: env.j2
     dest: "/srv/jitsi/.env"
 
-- name: Ensure jitsi web config file
+- name: Ensure jitsi web interface config file
   template:
     src: interface_config.js
     dest: "/srv/jitsi/interface_config.js"
+
+- name: Ensure jitsi web config file
+  template:
+    src: config.js
+    dest: "/srv/jitsi/config.js"
+
+- name: Ensure jitsi jvb config file
+  template:
+    src: logging.properties
+    dest: "/srv/jitsi/logging.properties"
 
 - name: Ensure environment file
   template:

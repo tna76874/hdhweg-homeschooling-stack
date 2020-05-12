@@ -23,5 +23,7 @@ sed -i.bak \
 mkdir -p /srv/jitsi/.jitsi-meet-cfg/{web/letsencrypt,transcripts,prosody/config,prosody/prosody-plugins-custom,jicofo,jvb,jigasi,jibri}
 
 cp interface_config.js /srv/jitsi/.jitsi-meet-cfg/web/
+cp config.js /srv/jitsi/.jitsi-meet-cfg/web/
+cp logging.properties /srv/jitsi/.jitsi-meet-cfg/jvb/
 
 docker-compose up -d

@@ -14,7 +14,7 @@ var interfaceConfig = {
     INITIAL_TOOLBAR_TIMEOUT: 20000,
     TOOLBAR_TIMEOUT: 4000,
     TOOLBAR_ALWAYS_VISIBLE: false,
-    DEFAULT_REMOTE_DISPLAY_NAME: 'Unbekannt in HDH',
+    DEFAULT_REMOTE_DISPLAY_NAME: 'WeGlerIn',
     DEFAULT_LOCAL_DISPLAY_NAME: 'Ich',
     SHOW_JITSI_WATERMARK: true,
     JITSI_WATERMARK_LINK: 'https://werkgymnasium.eu',
@@ -28,9 +28,9 @@ var interfaceConfig = {
     GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
     DISPLAY_WELCOME_PAGE_CONTENT: true,
     DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: false,
-    APP_NAME: 'HDH Jitsi Meet',
-    NATIVE_APP_NAME: 'HDH Jitsi Meet',
-    PROVIDER_NAME: 'HDH Jitsi',
+    APP_NAME: 'WeG Jitsi Meet',
+    NATIVE_APP_NAME: 'WeG Jitsi Meet',
+    PROVIDER_NAME: 'WeG Jitsi',
     LANG_DETECTION: true, // Allow i18n to detect the system language
     INVITATION_POWERED_BY: true,
 
