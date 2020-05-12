@@ -62,10 +62,10 @@ If you want, you can start rocketchat, and mumble by entering the directorys in 
 
 ### To-Do
 
-- [] adding a simple mailserver to the stack
-- [] restructure the mumble setup
-- [] implementing some other roles from the ZSL/LFB playbook
-- [] ...
+- [ ] adding a simple mailserver to the stack
+- [ ] restructure the mumble setup
+- [ ] implementing some other roles from the ZSL/LFB playbook
+- [ ] ...
 
 ### Questions
 
