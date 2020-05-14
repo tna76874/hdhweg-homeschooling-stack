@@ -33,4 +33,3 @@
   template:
     src: env.j2
     dest: "/srv/watchtower/.env"
-
