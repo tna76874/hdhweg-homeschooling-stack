@@ -6,6 +6,13 @@ These ansible playbook aims to setup a stack of homeschooling (Fernunterricht) t
 
 > **Contributions are always welcome -- feel free to join this project.**
 
+### Data privacy
+
+It is mandatory to collect as less data as possbile - preferably none. A big advantage of the containerized applications of these stack is the dedicated selection of files that are kept and are necessary to run the applications. All other files are stored within the container-instance and get recreated every day. The configurations of these repository are optimized for as less data collection as possible - for the best of our knowledge.
+
+* [Jitsi Configurations](roles/jitsi) 
+
+
 ### Acknowledgement
 
 Thanks to the ZSL/LFB and Ulm for their great ansible playbooks. The playbook of this repo is basing on these repos.
