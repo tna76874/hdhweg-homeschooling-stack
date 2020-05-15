@@ -2,7 +2,7 @@
 
 ### Aim
 
-These ansible playbook aims to setup a stack of homeschooling (Fernunterricht) tools on a single (virtual) server. The installation process, and much more important, the update process should be as less work as possible. All the tools of these playbook are deployed as self-updating docker-compose configurations. This will help you to set up a DSGVO compliant infrastructure for your school with **minimal efforts**. With your [Jitsi Meet](https://github.com/jitsi/jitsi-meet)  installation you can perform video-conferences including screen-mirroring - the configurations for the best performance are automatically included by this playbook. [Rocket.Chat](https://github.com/RocketChat/Rocket.Chat) is somehow a mix-up between Whatsapp and Discord and and nice way to communicate in chats with colleagues and students. When it comes to exchange files and collaborative working on "excel" tables and text documents, [cryptpad](https://github.com/xwiki-labs/cryptpad) is the suitable tool. With a very simple structured [whiteboard](https://github.com/cracker0dks/whiteboard) you can collaborative work on a common blackboard together with students. Having a common platform to talk to each other is quite important right now. To keep up your lessons and the social structure of your school, you can use [Mumble](https://www.mumble.info/) as a voice-chat server.
+These ansible playbook aims to setup a stack of homeschooling (Fernunterricht) tools on a single (virtual) server. The installation process, and much more important, the update process should be as less work as possible. All the tools of these playbook are deployed as self-updating docker-compose configurations. This will help you to set up a DSGVO compliant infrastructure for your school with **minimal efforts**. With your [Jitsi Meet](https://github.com/jitsi/jitsi-meet)  installation you can perform video-conferences including screen-mirroring - the configurations for the best performance are automatically included by this playbook. [Rocket.Chat](https://github.com/RocketChat/Rocket.Chat) is somehow a mix-up between Whatsapp and Discord and and nice way to communicate in chats with colleagues and students. When it comes to exchange files and collaboratively working on "excel" tables and text documents, [cryptpad](https://github.com/xwiki-labs/cryptpad) is the suitable tool. With a very simple structured [whiteboard](https://github.com/cracker0dks/whiteboard) you can collaborative work on a common blackboard together with students. Having a common platform to talk to each other is quite important right now. To keep up your lessons and the social structure of your school, you can use [Mumble](https://www.mumble.info/) as a voice-chat server.
 
 > **Contributions are always welcome -- feel free to join this project.**
 
@@ -10,7 +10,7 @@ These ansible playbook aims to setup a stack of homeschooling (Fernunterricht) t
 
 It is mandatory to collect as less data as possbile - preferably none. A big advantage of the containerized applications of these stack is the dedicated selection of files that are kept and are necessary to run the applications. All other files are stored within the container-instance and get recreated every day. The configurations of these repository are optimized for as less data collection as possible - for the best of our knowledge.
 
-* [Jitsi Configurations](roles/jitsi) 
+* [Jitsi configurations](roles/jitsi) 
 
 
 ### Acknowledgement
