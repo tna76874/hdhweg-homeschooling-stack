@@ -5,7 +5,7 @@
     chdir: /srv/whiteboard
 
 - name: Start jitsi
-  shell: install.sh
+  shell: /srv/jitsi/install.sh
   args:
     chdir: /srv/jitsi
 

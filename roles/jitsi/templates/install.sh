@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd /srv/jitsi
+
 function generatePassword() {
     openssl rand -hex 16
 }
