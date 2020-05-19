@@ -141,7 +141,7 @@ services:
         image: jitsi/jvb:latest
         restart: ${RESTART_POLICY}
         ports:
-            - '127.0.0.1:${JVB_PORT}:${JVB_PORT}/udp'
+            - '${JVB_PORT}:${JVB_PORT}/udp'
             - '127.0.0.1:${JVB_TCP_MAPPED_PORT}:${JVB_TCP_PORT}'
         volumes:
             - ${CONFIG}/jvb:/config:Z
