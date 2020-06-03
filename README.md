@@ -76,7 +76,3 @@ If you want, you can start rocketchat, and mumble by entering the directorys in 
 - [ ] implementing some other roles from the ZSL/LFB playbook
 - [ ] set up an interactive configuration script for the environment
 - [ ] ...
-
-### Questions
-
-If you have some question regarding this script, you can write to [Mh@werkgymnasium.de](mailto:Mh@werkgymnasium.de) 
