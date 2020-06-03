@@ -49,7 +49,7 @@ Create the playbook-variable-file.
 $ cp vars.yml.example vars.yml
 ```
 
-**Remove the ssh-keys inside the file `vars.yml` to prevent ssh access of the listed users.**
+<span style="color:red"> **Remove the ssh-keys inside the file `vars.yml` to prevent ssh access of the listed users.** </span>.
 
 Set the variable `letsencrypt_email` to your mailadress. You don't want your students to have bad warning messages on your nice websites once your letsencrypt certificates expired.
 
@@ -72,6 +72,7 @@ If you want, you can start rocketchat, and mumble by entering the directorys in 
 - [ ] adding a simple mailserver to the stack
 - [ ] restructure the mumble setup
 - [ ] implementing some other roles from the ZSL/LFB playbook
+- [ ] set up an interactive configuration script for the environment
 - [ ] ...
 
 ### Questions
