@@ -37,7 +37,9 @@ Check out these repos as well:
 Update your fresh VM and install git and ansible.
 
 ```
-$ sudo apt update && sudo apt install nano git ansible -y
+$ sudo apt update && sudo apt install software-properties-common nano git -y
+$ sudo apt-add-repository --yes --update ppa:ansible/ansible
+$ sudo apt install ansible -y
 ```
 
 Clone this repo:
