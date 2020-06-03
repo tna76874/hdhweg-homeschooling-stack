@@ -49,7 +49,7 @@ Create the playbook-variable-file.
 $ cp vars.yml.example vars.yml
 ```
 
-<span style="color:red"> **Remove the ssh-keys inside the file `vars.yml` to prevent ssh access of the listed users.** </span>.
+**Remove the ssh-keys inside the file `vars.yml` to prevent ssh access of the listed users.** 
 
 Set the variable `letsencrypt_email` to your mailadress. You don't want your students to have bad warning messages on your nice websites once your letsencrypt certificates expired.
 
