@@ -1,4 +1,0 @@
-[mumble]
-title=Mumble docker container
-description=Mumble docker container
-ports=TCPPORT/tcp|UDPPORT/udp

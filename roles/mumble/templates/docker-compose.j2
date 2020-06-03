@@ -4,8 +4,8 @@ services:
     image: sudoforge/mumble-server:latest
     restart: always
     ports:
-      - '127.0.0.1:${TCPPORT}:64738/tcp'
-      - '127.0.0.1:${UDPPORT}:64738/udp'
+      - '${TCPPORT}:64738/tcp'
+      - '${UDPPORT}:64738/udp'
     environment:
       - SUPERUSER_PASSWORD=${SUPERUSER_PASSWORD}
       - MUMBLE_ENABLESSL=1

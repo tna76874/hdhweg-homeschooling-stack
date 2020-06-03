@@ -28,11 +28,6 @@ sed -i \
     -e "s#UDPPORT#${UDPPORT}#g" \
     "$(dirname "$0")/ufw_mumble.bak"
 
-sudo cp ufw_mumble.bak /etc/ufw/applications.d/ufw_mumble
-rm ufw_mumble.bak
-sudo ufw reload
-sudo ufw allow mumble
-
 mkdir -p data
 cp welcometext ./data/
 
