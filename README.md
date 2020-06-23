@@ -37,7 +37,7 @@ Check out these repos as well:
 Install all prerequisites:
 
 ```
-wget -qO setup.sh https://github.com/tna76874/hdhweg-homeschooling-stack.git && chmod +x setup.sh && sudo bash setup.sh && rm setup.sh
+wget -qO setup.sh https://raw.githubusercontent.com/tna76874/hdhweg-homeschooling-stack/master/setup.sh && chmod +x setup.sh && sudo bash setup.sh && rm setup.sh
 ```
 
 **Remove the ssh-keys inside the file `vars.yml` to prevent ssh access of the listed users.** 
