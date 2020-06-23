@@ -98,8 +98,4 @@
   become: yes
   vars_files:
     - vars.yml
-  tags:
-    - startdockers
-  roles:
-    - docker
-    - dockercomposeup
+  tags: [ 'never', 'startdockers' ]
