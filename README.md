@@ -54,7 +54,11 @@ Run the playbook to fully set up your server.
 $ sudo ansible-playbook main.yml
 ```
 
-As default, cryptpad, jitsi and the whiteboard gets started by the playbook. Also a watchtower instance keeps these docker-images up-to-date. Every night the whiteboard-docker gets restarted via cron.
+Initial start cryptpad, jitsi and the whiteboard. A watchtower instance keeps these docker-images up-to-date. Every night the whiteboard-docker gets restarted via cron.
+
+```bash
+sudo ansible-playbook /root/hdhweg-homeschooling-stack/main.yml --tags startdockers
+```
 
 If you want, you can start rocketchat, and mumble by entering the directorys in  `/srv/`.
 
