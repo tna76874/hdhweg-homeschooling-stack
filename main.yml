@@ -99,6 +99,6 @@
   vars_files:
     - vars.yml
   tags: [ 'never', 'startdockers' ]
-  -  roles:
+  roles:
     - docker
     - dockercomposeup
