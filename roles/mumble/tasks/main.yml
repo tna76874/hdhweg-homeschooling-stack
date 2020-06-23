@@ -52,11 +52,6 @@
     dest: "/srv/mumble/updatecert.sh"
     mode: 0777
 
-- name: Ensure mumble ufw_rules
-  template:
-    src: ufw_mumble
-    dest: "/srv/mumble/ufw_mumble"
-
 - name: Ensure mumble welcometext file
   template:
     src: welcometext
