@@ -34,23 +34,10 @@ Check out these repos as well:
 
 ### Prepare
 
-Update your fresh VM and install git and ansible.
+Install all prerequisites:
 
 ```
-$ sudo apt update && sudo apt install software-properties-common nano git -y
-$ sudo apt-add-repository --yes --update ppa:ansible/ansible
-$ sudo apt install ansible -y
-```
-
-Clone this repo:
-```
-$ git clone https://github.com/tna76874/hdhweg-homeschooling-stack.git
-$ cd hdhweg-homeschooling-stack
-```
-
-Create the playbook-variable-file.
-```
-$ cp vars.yml.example vars.yml
+wget -qO setup.sh https://github.com/tna76874/hdhweg-homeschooling-stack.git && chmod +x setup.sh && sudo bash setup.sh && rm setup.sh
 ```
 
 **Remove the ssh-keys inside the file `vars.yml` to prevent ssh access of the listed users.** 
