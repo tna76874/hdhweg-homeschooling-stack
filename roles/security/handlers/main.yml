@@ -1,0 +1,7 @@
+- name: Restart ssh
+  service: name=ssh state=restarted
+  listen: Restart ssh
+
+- name: Restart ufw
+  service: name=ufw state=restarted
+  listen: Restart ufw  
