@@ -1,2 +1,2 @@
 [all]
-localhost       ansible_connection=local
+schoolstack       ansible_connection=local
