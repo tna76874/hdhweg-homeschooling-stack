@@ -66,6 +66,5 @@ If you want, you can start rocketchat, and mumble by entering the directorys in 
 
 - [ ] adding a simple mailserver to the stack
 - [ ] restructure the mumble setup
-- [ ] implementing some other roles from the ZSL/LFB playbook
 - [ ] set up an interactive configuration script for the environment
 - [ ] ...

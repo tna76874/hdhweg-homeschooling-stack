@@ -102,3 +102,12 @@
   roles:
     - docker
     - dockercomposeup
+
+- name: Secure the ssh server
+  hosts: schoolstack
+  become: yes
+  vars_files:
+    - vars.yml
+  tags: [ 'never', 'security' ]
+  roles:
+    - security
