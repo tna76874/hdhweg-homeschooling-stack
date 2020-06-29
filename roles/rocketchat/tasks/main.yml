@@ -38,9 +38,9 @@
     #    notify: reload nginx
 
 - cron:
-    name: "Cronjob restart jitsi"
+    name: "Cronjob restart rocketchat"
     minute: "00"
     hour: "02"
     job: "(cd /srv/rocketchat; /usr/bin/docker-compose down; /usr/bin/docker-compose up -d)&"
     user: root
-    state: present
+    state: absent
