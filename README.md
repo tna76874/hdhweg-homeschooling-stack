@@ -29,7 +29,7 @@ Check out these repos as well:
 
 ### Requirements
 
-* A (virtual) server hosted by the company of your choice. The server should be located in germany!
+* A (virtual) server hosted by the company of your choice.
 * A domain with an A-record pointing to the static IP-adress of your server.
 
 ### Prepare
