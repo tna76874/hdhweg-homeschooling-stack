@@ -1,0 +1,37 @@
+---
+- name: Ensure git and docker-compose is available
+  apt:
+    name:
+    - git
+    - docker-compose
+    - docker
+    state: present
+
+- name: Create user
+  user:
+    name: collabora
+    shell: /bin/bash
+    password: '!'
+    update_password: on_create
+    groups: docker
+    state: present
+
+- name: Ensure base / data directories for collabora exist
+  file:
+    path: "{{ item.path }}"
+    owner: "{{ item.owner }}"
+    state: directory
+  loop:
+    - { path: "/srv/collabora", owner: "collabora" }      
+
+- name: Ensure docker-compose.yml for collabora
+  template:
+    src: docker-compose.j2
+    dest: "/srv/collabora/docker-compose.yml"
+
+- name: Ensure collabora nginx conf is present
+  template:
+    src: nginx.j2
+    dest: "/etc/nginx/{{ nginx_domain_name }}.d/whiteboard.conf"
+    #    notify: reload nginx
+

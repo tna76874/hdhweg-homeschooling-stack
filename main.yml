@@ -82,6 +82,21 @@
     - docker
     - mumble
 
+- name: Collabora
+  hosts: schoolstack
+  become: yes
+  vars_files:
+    - vars.yml
+  tags:
+    - collabora
+  vars:
+    nginx_domain_name: "collabora.{{ main_domain }}"
+  roles:
+    - nginx
+    - nginx-tls-add
+    - docker
+    - collabora
+
 - name: Watchtower
   hosts: schoolstack
   become: yes

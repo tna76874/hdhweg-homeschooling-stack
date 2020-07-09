@@ -1,0 +1,9 @@
+version: '2'
+services:
+  collabora:
+    image: collabora/code:latest
+    ports:
+      - 127.0.0.1:9980:9980
+    environment:
+      - domain={{ collabora_domain }}
+    restart: always

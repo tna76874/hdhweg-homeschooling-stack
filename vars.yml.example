@@ -6,3 +6,5 @@ users:
 letsencrypt_email: USER@MYMAIL.XYZ
 
 main_domain: MYDOMAIN.XYZ
+
+collabora_domain: SOMETHING.OTHERDOMAIN.XYZ
