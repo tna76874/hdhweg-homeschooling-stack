@@ -32,6 +32,6 @@
 - name: Ensure collabora nginx conf is present
   template:
     src: nginx.j2
-    dest: "/etc/nginx/{{ nginx_domain_name }}.d/whiteboard.conf"
+    dest: "/etc/nginx/{{ nginx_domain_name }}.d/collabora.conf"
     #    notify: reload nginx
 
