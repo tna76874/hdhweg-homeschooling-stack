@@ -34,7 +34,7 @@
     src: env.j2
     dest: "/srv/whiteboard/.env"
 
-- name: Ensure rocketchat nginx conf is present
+- name: Ensure whiteboard nginx conf is present
   template:
     src: whiteboard.nginx
     dest: "/etc/nginx/{{ nginx_domain_name }}.d/whiteboard.conf"

@@ -67,4 +67,4 @@
     hour: "01"
     job: "(cd /srv/jitsi; /usr/bin/docker-compose down; /usr/bin/docker-compose up -d)&"
     user: root
-    state: present
+    state: absent

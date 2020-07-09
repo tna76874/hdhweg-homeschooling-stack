@@ -14,10 +14,10 @@ var interfaceConfig = {
     INITIAL_TOOLBAR_TIMEOUT: 20000,
     TOOLBAR_TIMEOUT: 4000,
     TOOLBAR_ALWAYS_VISIBLE: false,
-    DEFAULT_REMOTE_DISPLAY_NAME: 'WeGlerIn',
-    DEFAULT_LOCAL_DISPLAY_NAME: 'Ich',
+    DEFAULT_REMOTE_DISPLAY_NAME: 'Jitsi',
+    DEFAULT_LOCAL_DISPLAY_NAME: 'Me',
     SHOW_JITSI_WATERMARK: true,
-    JITSI_WATERMARK_LINK: 'https://werkgymnasium.eu',
+    JITSI_WATERMARK_LINK: 'https://github.com/tna76874/hdhweg-homeschooling-stack',
 
     // if watermark is disabled by default, it can be shown only for guests
     SHOW_WATERMARK_FOR_GUESTS: true,
@@ -28,9 +28,9 @@ var interfaceConfig = {
     GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
     DISPLAY_WELCOME_PAGE_CONTENT: true,
     DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: false,
-    APP_NAME: 'WeG Jitsi Meet',
-    NATIVE_APP_NAME: 'WeG Jitsi Meet',
-    PROVIDER_NAME: 'WeG Jitsi',
+    APP_NAME: 'Jitsi Meet',
+    NATIVE_APP_NAME: 'Jitsi Meet',
+    PROVIDER_NAME: 'Jitsi',
     LANG_DETECTION: true, // Allow i18n to detect the system language
     INVITATION_POWERED_BY: true,
 
