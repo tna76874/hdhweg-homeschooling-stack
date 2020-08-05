@@ -105,7 +105,7 @@
   tags:
     - mailserver
   vars:
-    domain_name: "mail.{{ main_domain }}"
+    domain_name: "{{ main_domain }}"
   roles:
     - docker
     - mailserver
