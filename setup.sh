@@ -26,3 +26,4 @@ git clone https://github.com/tna76874/hdhweg-homeschooling-stack.git ${REPODIR} 
 # run the playbook to set up the system
 cd ${REPODIR}
 sudo cp vars.yml.example vars.yml
+sudo cp inventory.example inventory

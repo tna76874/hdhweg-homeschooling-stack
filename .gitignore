@@ -3,3 +3,4 @@ vars.yml
 tmp/
 !tmp/.gitkeep
 vault_password
+vars.yml
