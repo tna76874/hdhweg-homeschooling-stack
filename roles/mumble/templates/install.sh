@@ -26,6 +26,9 @@ environment() {
         cp docker-compose.yml.example docker-compose.yml
     fi    
 
+    mkdir -p data
+    cp welcometext ./data/
+
     source .env
 
     if [ "$SUPERUSER_PASSWORD" == "" ]; then
