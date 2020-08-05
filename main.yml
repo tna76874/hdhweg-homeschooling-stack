@@ -97,6 +97,21 @@
     - docker
     - collabora
 
+- name: Mailserver
+  hosts: all
+  become: yes
+  vars_files:
+    - vars.yml
+  tags:
+    - mailserver
+  vars:
+    domain_name: "mail.{{ main_domain }}"
+  roles:
+    - nginx
+    - nginx-tls-add
+    - docker
+    - mailserver
+
 - name: Watchtower
   hosts: all
   become: yes

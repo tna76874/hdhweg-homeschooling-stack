@@ -62,11 +62,4 @@ Initial start cryptpad, jitsi and the whiteboard. A watchtower instance keeps th
 sudo ansible-playbook /root/hdhweg-homeschooling-stack/main.yml --tags startdockers
 ```
 
-If you want, you can start rocketchat, and mumble by entering the directorys in  `/srv/`.
-
-### To-Do
-
-- [ ] adding a simple mailserver to the stack
-- [ ] restructure the mumble setup
-- [ ] set up an interactive configuration script for the environment
-- [ ] ...
+If you want, you can start rocketchat, and mumble by entering the directorys in  `/srv/` and either just start the application by `docker-compose up` or initally setup the application by `./install.sh`.

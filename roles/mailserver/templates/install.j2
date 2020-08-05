@@ -1,0 +1,184 @@
+#!/bin/bash
+## Define some functions
+function generatePassword() {
+    openssl rand -hex 16
+}
+
+confirm() {
+    # call with a prompt string or use a default
+    read -r -p "$@"" [y/N]: " response
+    case "$response" in
+        [yY][eE][sS]|[yY])
+            return 0
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+
+#Download setup.sh and environments
+environment() {
+    if [ ! -f setup.sh ]; then
+        curl -o setup.sh https://raw.githubusercontent.com/tomav/docker-mailserver/master/setup.sh; chmod a+x ./setup.sh
+    fi
+    if [ ! -f .env ]; then
+        curl -o .env https://raw.githubusercontent.com/tomav/docker-mailserver/master/.env.dist
+    fi
+    if [ ! -f env-mailserver ]; then
+        curl -o env-mailserver https://raw.githubusercontent.com/tomav/docker-mailserver/master/env-mailserver.dist
+    fi
+    if [ ! -f docker-compose.yml ]; then
+        cp docker-compose.yml.example docker-compose.yml
+    fi  
+    source .env
+
+    DOMAINNAME={{ domain_name }}
+
+    sed -i \
+        -e "s#DOMAINNAME=.*#DOMAINNAME=${DOMAINNAME}#g" \
+        "$(dirname "$0")/.env"
+
+    sed -i 's/SSL_TYPE=.*/SSL_TYPE=letsencrypt/g' env-mailserver
+
+}
+
+#(Re)generate letsencrypt certificates
+certificates() {
+    if [ ! -f .env ]; then
+        echo -e "No .env file found."
+    else
+        source .env
+        DIR="${PWD}"
+
+        sudo rm -rf letsencrypt
+        mkdir -p letsencrypt
+
+        cd "$DIR"
+        sudo service nginx stop
+        docker-compose down
+        sleep 1
+        cd letsencrypt
+        docker run --rm -ti -v $PWD/log/:/var/log/letsencrypt/ -v $PWD/etc/:/etc/letsencrypt/ -p 80:80 certbot/certbot certonly --standalone -d "${HOSTNAME}"."${DOMAINNAME}"
+        sudo service nginx start
+    fi
+}
+
+#Renew certificates
+renew() {
+    DIR="${PWD}"
+
+    cd "$DIR"
+    sudo service nginx stop
+    docker-compose down
+    sleep 1
+    cd letsencrypt
+    docker run --rm -ti -v $PWD/log/:/var/log/letsencrypt/ -v $PWD/etc/:/etc/letsencrypt/ -p 80:80 -p 443:443 certbot/certbot renew
+    sudo service nginx start
+
+    cd "$DIR"
+    docker-compose up -d mail
+}
+
+#Generate dnsconfig file
+getdnsconfig() {
+    source .env
+    DIR="${PWD}"
+    echo -e "Add this into your DNS-Server as an TXT entry.\n" > ./dnsconfig.log
+    echo -e "1. DKIM\n" >> ./dnsconfig.log
+    sudo cat ./config/opendkim/keys/"$DOMAINNAME"/mail.txt >> ./dnsconfig.log
+    echo -e "\n" >> ./dnsconfig.log
+    echo -e "2. SPF\n" >> ./dnsconfig.log
+    echo -e "$DOMAINNAME in TXT \"v=spf1 mx ~all\"\n" >> ./dnsconfig.log
+    echo -e "3. DMARC\n" >> ./dnsconfig.log
+    echo -e "_dmarc.$DOMAINNAME in TXT v=DMARC1; p=none" >> ./dnsconfig.log
+    cat ./dnsconfig.log
+}
+
+#Setup the mailserver and dkim config
+firstsetup() {
+    source .env
+    DIR="${PWD}"
+    if [ ! -f ./config/opendkim/keys/"$DOMAINNAME"/mail.txt ]; then
+        USER="mail"
+        read -e -p "User $USER@$DOMAINNAME: " -i "$USER" USER
+        ./setup.sh email add "$USER"@$DOMAINNAME
+        ./setup.sh config dkim
+        docker-compose down
+        docker pull tvial/docker-mailserver:latest
+        docker-compose up -d mail
+    fi
+    getdnsconfig
+}
+
+#Enable cronjob to renew certificates
+enablecron() {
+CRONTAB="SHELL=/bin/sh\nPATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin\n
+15 3 * * * (cd ${PWD} ; ./install.sh -r)&
+"
+echo -e "$CRONTAB" > /etc/cron.d/mailcerts
+}
+
+#Disable cronjob to renew certificates
+disablecron() {
+rm -f /etc/cron.d/mailcerts
+}
+
+# ###### Parsing arguments
+
+#Usage print
+usage() {
+    echo "Usage: $0 -[i|c|r|s|e|d]" >&2
+    echo "
+   -i,    Initialize setup.sh and environments
+   -c,    (Re)generate letsencrypt certificates
+   -r,    Renew certificates
+   -s,    Setup the mailserver and dkim config
+   -e,    Enable cronjob to renew certificates
+   -d,    Disable cronjob to renew certificates
+   -h,    Print this help text
+
+If the script will be called without parameters, it will start all steps one after another.
+   "
+    exit 1
+}
+
+while getopts ':icrsedh' opt
+#putting : in the beginnnig suppresses the errors for invalid options
+do
+case "$opt" in
+   'i')environment;
+       ;;
+   'c')certificates;
+       ;;
+   'r')renew;
+       ;; 
+   's')firstsetup;
+       ;;
+   'e')enablecron;
+       ;;
+   'd')disablecron;
+       ;;
+   'h')usage;
+       ;;
+    *) usage;
+       ;;
+esac
+done
+if [ $OPTIND -eq 1 ]; then
+    if $(confirm "Download setup.sh and environments?") ; then
+        environment
+    fi
+    if $(confirm "(Re)generate letsencrypt certificates?") ; then
+        certificates
+    fi
+    if $(confirm "Setup the mailserver and dkim config?") ; then
+        firstsetup
+    fi
+    if $(confirm "Enable cronjob to renew certificates?") ; then
+        enablecron
+    fi
+fi
+
+
+
