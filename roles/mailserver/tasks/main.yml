@@ -27,10 +27,10 @@
 - name: Ensure docker-compose.yml for mailserver
   template:
     src: docker-compose.j2
-    dest: "/srv/mumble/docker-compose.yml.example"
+    dest: "/srv/mailserver/docker-compose.yml.example"
 
 - name: Ensure mailserver install script
   template:
     src: install.j2
-    dest: "/srv/mumble/install.sh"
+    dest: "/srv/mailserver/install.sh"
     mode: 0777
