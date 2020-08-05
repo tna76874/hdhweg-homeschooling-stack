@@ -3,13 +3,16 @@ version: '2'
 
 services:
   cryptpad:
+    user: root
     image: "promasu/cryptpad:latest"
     hostname: cryptpad
+
+    restart: always
 
     volumes:
       - ./data/blob:/cryptpad/blob
       - ./data/block:/cryptpad/block
-      - ./customize:/cryptpad/customize
+      - ./data/customize:/cryptpad/customize
       - ./data/config.js:/cryptpad/config/config.js
       - ./data/data:/cryptpad/data
       - ./data/files:/cryptpad/datastore
