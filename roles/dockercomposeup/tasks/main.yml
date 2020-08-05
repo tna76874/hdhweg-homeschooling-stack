@@ -14,6 +14,11 @@
   args:
     chdir: /srv/cryptpad
 
+- name: Start collabora
+  shell: docker-compose up -d
+  args:
+    chdir: /srv/collabora
+
 - name: Start watchtower
   shell: docker-compose up -d
   args:

@@ -27,12 +27,12 @@
 - name: Ensure docker-compose.yml for jitsi
   template:
     src: docker-compose.j2
-    dest: "/srv/jitsi/docker-compose.yml"
+    dest: "/srv/jitsi/docker-compose.yml.example"
 
 - name: Ensure environment file
   template:
     src: env.j2
-    dest: "/srv/jitsi/.env"
+    dest: "/srv/jitsi/env.example"
 
 - name: Ensure jitsi web interface config file
   template:
