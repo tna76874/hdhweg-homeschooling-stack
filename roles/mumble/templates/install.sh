@@ -68,6 +68,7 @@ certificates() {
         sudo service nginx start
 
         cd "$DIR"
+        mkdir -p data
         sudo cp ./letsencrypt/etc/live/"$DOMAIN"/fullchain.pem ./data/cert.pem
         sudo cp ./letsencrypt/etc/live/"$DOMAIN"/privkey.pem ./data/key.pem
     fi
@@ -87,6 +88,7 @@ renew() {
     sudo service nginx start
 
     cd "$DIR"
+    mkdir -p data
     sudo cp ./letsencrypt/etc/live/"$DOMAIN"/fullchain.pem ./data/cert.pem
     sudo cp ./letsencrypt/etc/live/"$DOMAIN"/privkey.pem ./data/key.pem
 
