@@ -1,27 +1,28 @@
+---
 version: '2'
-services:
 
+services:
   cryptpad:
     image: "promasu/cryptpad:latest"
     hostname: cryptpad
 
-    labels:
-      - traefik.port=3000
-      - traefik.frontend.passHostHeader=true
-    environment:
-      - USE_SSL=${USE_SSL}
-      - STORAGE=${STORAGE}
-      - LOG_TO_STDOUT=${LOG_TO_STDOUT}
+    volumes:
+      - ./data/blob:/cryptpad/blob
+      - ./data/block:/cryptpad/block
+      - ./customize:/cryptpad/customize
+      - ./data/config.js:/cryptpad/config/config.js
+      - ./data/data:/cryptpad/data
+      - ./data/files:/cryptpad/datastore
 
     ports:
-      - "127.0.0.1:3000:3000"
-      - "127.0.0.1:3001:3001"
+      - "3000:3000"
+      - "3001:3001"
 
-    restart: always
-    volumes:
-      - ./data/files:/cryptpad/datastore:rw
-      - ./data/customize:/cryptpad/customize:rw
-      - ./data/blob:/cryptpad/blob:rw
-      - ./data/block:/cryptpad/block:rw
-      - ./data/config:/cryptpad/cfg:rw
-      - ./data/data:/cryptpad/data:rw
+    expose:
+      - "3000"
+      - "3001"
+
+    ulimits:
+      nofile:
+        soft: 1000000
+        hard: 1000000
