@@ -3,14 +3,11 @@ services:
   mumble:
     image: sudoforge/mumble-server:latest
     restart: always
+    container_name: ${COMPOSE_PROJECT_NAME}
     ports:
       - '${TCPPORT}:64738/tcp'
       - '${UDPPORT}:64738/udp'
-    environment:
-      - SUPERUSER_PASSWORD=${SUPERUSER_PASSWORD}
-      - MUMBLE_ENABLESSL=1
-      - MUMBLE_ALLOWPING=false
-      - MUMBLE_USERS=${USERS}
-      - MUMBLE_REGISTERNAME=${SERVERNAME}
+    env_file:
+      - .env
     volumes:
       - ./data:/data
