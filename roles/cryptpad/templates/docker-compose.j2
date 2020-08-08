@@ -18,12 +18,10 @@ services:
       - ./data/files:/cryptpad/datastore
 
     ports:
-      - "3000:3000"
-      - "3001:3001"
+      - "127.0.0.1:3000:3000"
 
     expose:
       - "3000"
-      - "3001"
 
     ulimits:
       nofile:
