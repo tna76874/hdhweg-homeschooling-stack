@@ -213,17 +213,9 @@ case "$opt" in
 esac
 done
 if [ $OPTIND -eq 1 ]; then
-    if $(confirm "Install prerequisites (docker, docker-compose)?") ; then
-        cd "$DIR"
-        prerequisites
-    fi
     if $(confirm "Setup environments?") ; then
         cd "$DIR"
         environment
-    fi
-    if $(confirm "Generate nginx virtual and certificates?") ; then
-        cd "$DIR"
-        nginxit
     fi
     if $(confirm "Startup docker-compose?") ; then
         cd "$DIR"
