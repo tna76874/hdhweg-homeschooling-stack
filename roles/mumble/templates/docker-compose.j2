@@ -3,11 +3,26 @@ services:
   mumble:
     image: sudoforge/mumble-server:latest
     restart: always
-    container_name: ${COMPOSE_PROJECT_NAME}
+    container_name: mumble
     ports:
       - '${TCPPORT}:64738/tcp'
       - '${UDPPORT}:64738/udp'
+    expose:
+      - 64738
     env_file:
       - .env
+    environment:
+      - MUMBLE_CERTFILE=/etc/letsencrypt/live/${WEBDOMAIN}/fullchain.pem
+      - MUMBLE_KEYFILE=/etc/letsencrypt/live/${WEBDOMAIN}/privkey.pem
     volumes:
-      - ./data:/data
+      - ./data/data:/data
+      - /etc/letsencrypt/live/${WEBDOMAIN}/fullchain.pem:/etc/letsencrypt/live/${WEBDOMAIN}/fullchain.pem
+      - /etc/letsencrypt/live/${WEBDOMAIN}/privkey.pem:/etc/letsencrypt/live/${WEBDOMAIN}/privkey.pem
+  mumbleweb:
+    image: tna76874/mumble-web
+    container_name: mumbleweb
+    environment:
+      - MUMBLE_SERVER=mumble:64738
+    ports:
+      - 127.0.0.1:${WEBPORT}:8080
+    restart: always

@@ -77,8 +77,10 @@
   tags:
     - mumble
   vars:
-    domain_name: "mumble.{{ main_domain }}"
+    nginx_domain_name: "mumble.{{ main_domain }}"
   roles:
+    - nginx
+    - nginx-tls-add
     - docker
     - mumble
 

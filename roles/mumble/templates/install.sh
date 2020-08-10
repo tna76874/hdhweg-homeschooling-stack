@@ -1,5 +1,9 @@
 #!/bin/bash
 ## Define some functions
+
+SCRIPT=$(readlink -f "$0")
+DIR=$(dirname "$SSCRIPT")
+
 function generatePassword() {
     openssl rand -hex 16
 }
@@ -24,25 +28,26 @@ environment() {
     fi
     if [ ! -f docker-compose.yml ]; then
         cp docker-compose.yml.example docker-compose.yml
-    fi    
+    fi
 
-    mkdir -p data
-    cp welcometext ./data/
+    mkdir -p {data,data/data}
+    cp welcometext ./data/data
 
     source .env
 
     if [ "$SUPERUSER_PASSWORD" == "" ]; then
         SUPERUSER_PASSWORD=$(generatePassword)
-        read -e -p "Admin Password: " -i "$SUPERUSER_PASSWORD" SUPERUSER_PASSWORD
     fi
 
     sed -i \
         -e "s#SUPERUSER_PASSWORD=.*#SUPERUSER_PASSWORD=${SUPERUSER_PASSWORD}#g" \
-        -e "s#DOMAIN=.*#DOMAIN=${DOMAIN}#g" \
-        -e "s#MUMBLE_REGISTERNAME=.*#MUMBLE_REGISTERNAME=${MUMBLE_REGISTERNAME}#g" \
+        -e "s#DOMAIN=.*#DOMAIN=${WEBDOMAIN}#g" \
+        -e "s#WEBDOMAIN=.*#WEBDOMAIN=${WEBDOMAIN}#g" \
+        -e "s#MUMBLE_REGISTERNAME=.*#MUMBLE_REGISTERNAME=\"${MUMBLE_REGISTERNAME}\"#g" \
         -e "s#USERS=.*#MUMBLE_USERS=${MUMBLE_USERS}#g" \
         -e "s#TCPPORT=.*#TCPPORT=${TCPPORT}#g" \
-        -e "s#UDPPORT=.*#UDPPORT=${UDPPORT}#g" \
+        -e "s#UDPPORT=.*#UDPPORT=${TCPPORT}#g" \
+        -e "s#WEBPORT=.*#WEBPORT=${WEBPORT}#g" \
         "$(dirname "$0")/.env"
 }
 
@@ -129,27 +134,67 @@ prerequisites() {
     newgrp docker
 }
 
+nginxit() {
+cd "$DIR"
+if $(confirm "--Install nginx and certbot?") ; then
+    sudo apt-get update
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install software-properties-common nginx -qy
+    sudo DEBIAN_FRONTEND=noninteractive add-apt-repository universe
+    sudo DEBIAN_FRONTEND=noninteractive add-apt-repository ppa:certbot/certbot
+    sudo apt-get update
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install certbot python3-certbot-nginx -qy
+fi
+if [ ! -f .env ]; then
+        echo -e "No .env file found." 
+else
+    cp nginx.example nginx
+    source .env
+
+    sed -i \
+        -e "s/TCPPORT/${WEBPORT}/g" \
+        -e "s/MYDOMAIN/${WEBDOMAIN}/g" \
+        "$(dirname "$0")/nginx"
+
+    sudo cp nginx /etc/nginx/sites-available/"${WEBDOMAIN}"
+    rm nginx
+    sudo ln -s /etc/nginx/sites-available/"${WEBDOMAIN}" /etc/nginx/sites-enabled/"${WEBDOMAIN}"
+    if $(confirm "--Purge all keys in /etc/letsencrypt/[live|archive]/${WEBDOMAIN}*?") ; then
+        rm -rf /etc/letsencrypt/live/${WEBDOMAIN}*
+        rm -rf /etc/letsencrypt/archive/${WEBDOMAIN}*
+    fi
+    sudo certbot --nginx --expand -d "${WEBDOMAIN}"
+fi
+}
+
+unlinkhtml() {
+if [ ! -f .env ]; then
+        echo -e "No .env file found." 
+else
+    source .env
+    sudo unlink /etc/nginx/sites-enabled/"${WEBDOMAIN}"
+fi
+}
+
 # ###### Parsing arguments
 
 #Usage print
 usage() {
-    echo "Usage: $0 -[p|s|c|r|e|d|h]" >&2
+    echo "Usage: $0 -[p|s|r|n|d]" >&2
     echo "
    -p,      Install prerequisites (docker, docker-compose)
    -s,      Setup environment
-   -c,      (Re)generate letsencrypt certificates
-   -r,      Renew certificates
-   -e,      Enable cronjob to renew certificates
-   -d,      Disable cronjob to renew certificates
+   -r,      Disable cronjob to renew certificates
+   -n,      Generate nginx virtual and certificates
+   -d,      Deactivate access to HTML client
    -h,      Print this help text
 
 If the script will be called without parameters, it will run:
-    $0 -s -c -e``
+    $0 -p -s -n
    ">&2
     exit 1
 }
 
-while getopts ':pscredh' opt
+while getopts ':psrnd' opt
 #putting : in the beginnnig suppresses the errors for invalid options
 do
 case "$opt" in
@@ -157,27 +202,32 @@ case "$opt" in
        ;;
    's')environment;
        ;;
-   'c')certificates;
+   'r')disablecron;
        ;;
-   'r')renew;
-       ;; 
-   'e')enablecron;
+   'n')nginxit;
        ;;
-   'd')disablecron;
-       ;;
-   'h')usage;
+   'd')unlinkhtml;
        ;;
     *) usage;
        ;;
 esac
 done
 if [ $OPTIND -eq 1 ]; then
+    if $(confirm "Install prerequisites (docker, docker-compose)?") ; then
+        cd "$DIR"
+        prerequisites
+    fi
     if $(confirm "Setup environments?") ; then
+        cd "$DIR"
         environment
     fi
-    if $(confirm "(Re)generate letsencrypt certificates and enable cron?") ; then
-        certificates
-        enablecron
+    if $(confirm "Generate nginx virtual and certificates?") ; then
+        cd "$DIR"
+        nginxit
+    fi
+    if $(confirm "Startup docker-compose?") ; then
+        cd "$DIR"
+        docker-compose up -d
     fi
 fi
 

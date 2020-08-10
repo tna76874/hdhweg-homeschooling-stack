@@ -44,3 +44,8 @@
   template:
     src: welcometext
     dest: "/srv/mumble/welcometext"
+
+- name: Ensure mumble nginx conf is present
+  template:
+    src: nginx.j2
+    dest: "/etc/nginx/{{ nginx_domain_name }}.d/mumble.conf"
