@@ -31,15 +31,26 @@ nano ~/.jitsi-meet-cfg/jvb/logging.properties
 ## Performance Optimierung
 In der config.js-Datei:
 
-### Festlegen der Standardsprache auf Deutsch
+### Deaktivierung der blauen Audio-Dots beim Speaker
 
 ```bash
-defaultLanguage: 'de',
+disableAudioLevels: true,
 ```
+
+Reduziert die CPU-Auslastung bei den Clients.
+
+### Videokonferenz nur mit Audio starten
+
+```bash
+startAudioOnly: true,
+```
+
+Video kann dann bei Bedarf aktiviert werden. Gerade wenn viele Teilnehmer einen Konferenzraum gleichzeitig betreten, sorgt das für eine deutliche Entlastung.
+
 ### Reduzierung der Auflösung von 720 auf 480
 
 ```bash
-resolution: 480,
+maxFullResolutionParticipants: 2,
 
 constraints: { 
    video: {  
@@ -53,32 +64,34 @@ constraints: {
 }, 
 ```
 
-### Limitierung der übertragenen Video-Feeds
-
-```bash
-channelLastN: 4,
-```
-
-Nur die Videodaten bzw. Streams der letzten vier aktiven Sprecher wird übermittelt. Alle anderen Teilnehmer werden sozusagen »eingefroren«, bis sie wieder sprechen
-
 ### Enable Layer Suspension
 
 ```bash
 enableLayerSuspension: true,
 ```
+
 Der Client (ab Chrome 69) sendet nur jene Streams, die zu einem bestimmten Zeitpunkt angesehen werden, wodurch der CPU- und Bandbreitenverbrauch sowohl auf der Client- als auch auf der Server-Seite reduziert und gleichzeitig die Videoqualität verbessert wird.
 
-### Videokonferenz nur mit Audio starten
+### Limitierung der übertragenen Video-Feeds
 
 ```bash
-startAudioOnly: true,
+lastNLimits: {
+     5:  10,
+     30: 7,
+     50: 5,
+     70: 3,
+     90: 2
+},
 ```
-Video kann dann bei Bedarf aktiviert werden. Gerade wenn viele Teilnehmer einen Konferenzraum gleichzeitig betreten, sorgt das für eine deutliche Entlastung.
 
+Nur die Videodaten bzw. Streams der letzten aktiven Sprecher wird übermittelt. Alle anderen Teilnehmer werden sozusagen »eingefroren«, bis sie wieder sprechen
 
-### Deaktivierung der blauen Audio-Dots beim Speaker
+### Sonstiges 
 
 ```bash
-startAudioOnly: true,
+hideLobbyButton: false,
+requireDisplayName: true,
+defaultLanguage: 'de',
+disableThirdPartyRequests: true,
 ```
-Reduziert die CPU-Auslastung bei den Clients.
+
