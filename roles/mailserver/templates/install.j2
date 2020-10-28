@@ -23,14 +23,14 @@ environment() {
         curl -o setup.sh https://raw.githubusercontent.com/tomav/docker-mailserver/master/setup.sh; chmod a+x ./setup.sh
     fi
     if [ ! -f .env ]; then
-        curl -o .env https://raw.githubusercontent.com/tomav/docker-mailserver/master/.env.dist
+        curl -o .env https://raw.githubusercontent.com/tomav/docker-mailserver/master/template.env
     fi
     if [ ! -f env-mailserver ]; then
-        curl -o env-mailserver https://raw.githubusercontent.com/tomav/docker-mailserver/master/env-mailserver.dist
+        wget https://raw.githubusercontent.com/tomav/docker-mailserver/master/env-mailserver
     fi
     if [ ! -f docker-compose.yml ]; then
         cp docker-compose.yml.example docker-compose.yml
-    fi  
+    fi
     source .env
 
     DOMAINNAME={{ domain_name }}
