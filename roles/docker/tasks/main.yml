@@ -17,8 +17,15 @@
 
 - name: Ensure Docker Repository is present
   apt_repository:
-    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_facts['lsb']['codename'] }} stable
     state: present
+    filename: docker
+
+- name: Ensure docker-compose is absent from apt package
+  apt:
+    name:
+      - docker-compose
+    state: absent
 
 - name: Ensure Docker is installed
   apt:
@@ -26,13 +33,31 @@
       - docker-ce
       - docker-ce-cli
       - containerd.io
-      - docker-compose
+      - python3
+      - python3-pip
     state: present
+
+- name: Ensure pip is up-to-date
+  shell: "pip3 install --upgrade pip"
+  become: yes
+
+- name: Ensure docker-compose installed
+  pip:
+    name: docker-compose
+    executable: pip3
+    state: present
+  become: true
+
+- name: Determine existing sudo users
+  shell: 'grep sudo /etc/group | cut -d: -f4 | sed "s/,/\n/"'
+  changed_when: false 
+  register: sudo_users
 
 - name: Ensure Users are in Docker group
   user:
-    name: '{{ item.name }}'
+    name: '{{ item }}'
     groups: docker
     append: yes
     state: present
-  with_items: '{{ users }}'
+  with_items: '{{ sudo_users.stdout_lines }}'
+
