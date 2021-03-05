@@ -38,10 +38,6 @@ if [ ! -f .env ]; then
         -e "s#.*LETSENCRYPT_DOMAIN=.*#LETSENCRYPT_DOMAIN=${LETSENCRYPT_DOMAIN}#g" \
         "$(dirname "$0")/.env"
 
-    cp interface_config.js /srv/jitsi/.jitsi-meet-cfg/web/
-    cp config.js /srv/jitsi/.jitsi-meet-cfg/web/
-    cp logging.properties /srv/jitsi/.jitsi-meet-cfg/jvb/
-
     docker-compose up -d
 else
     echo -e "To reinstall, please delete .env file."
