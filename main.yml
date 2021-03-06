@@ -112,16 +112,12 @@
     - docker
     - mailserver
 
-- name: Watchtower
-  hosts: all
+- name: Ensure restic
+  hosts: vpnserver
   become: yes
-  vars_files:
-    - vars.yml
-  tags:
-    - watchtower
+  tags: restic
   roles:
-    - docker
-    - watchtower
+    - restic
 
 - name: Start the most important docker containers
   hosts: all
@@ -141,3 +137,12 @@
   tags: [ 'never', 'security' ]
   roles:
     - security
+
+- name: Perform backup
+  hosts: all
+  become: yes
+  vars:
+    restic_backup: /srv
+  tags: [ 'never', 'backup' ]
+  roles:
+    - restic_backup
