@@ -115,4 +115,14 @@
     state: absent
   notify: restart sshd
 
+- name: Ensure scripts
+  copy:
+    src: "{{ item }}" 
+    dest: "/usr/local/bin"
+    owner: "root"
+    group: "root"
+    mode: 0755
+  with_items:
+    - "dockerexport.sh"
+
 - import_tasks: firewall.yml
