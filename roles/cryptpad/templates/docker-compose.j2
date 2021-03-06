@@ -1,27 +1,30 @@
 ---
-version: '2'
+version: '3.8'
 
 services:
   cryptpad:
-    user: root
-    image: "promasu/cryptpad:latest"
+    image: "promasu/cryptpad"
     hostname: cryptpad
 
-    restart: always
+    environment:
+      - CPAD_MAIN_DOMAIN={{ nginx_domain_name }}
+      - CPAD_SANDBOX_DOMAIN={{ nginx_domain_name }}
+      - CPAD_HTTP2_DISABLE=true
 
     volumes:
       - ./data/blob:/cryptpad/blob
       - ./data/block:/cryptpad/block
-      - ./data/customize:/cryptpad/customize
-      - ./data/config/config.js:/cryptpad/config/config.js
+      - ./customize:/cryptpad/customize
       - ./data/data:/cryptpad/data
       - ./data/files:/cryptpad/datastore
+      - ./data/data/config.js:/cryptpad/config/config.js
 
     ports:
       - "127.0.0.1:3000:3000"
 
     expose:
-      - "3000"
+      - "80"
+      - "443"
 
     ulimits:
       nofile:
