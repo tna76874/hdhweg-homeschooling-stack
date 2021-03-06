@@ -14,10 +14,10 @@ services:
     volumes:
       - ./data/blob:/cryptpad/blob
       - ./data/block:/cryptpad/block
-      - ./customize:/cryptpad/customize
+      - ./data/customize:/cryptpad/customize
       - ./data/data:/cryptpad/data
       - ./data/files:/cryptpad/datastore
-      - ./data/data/config.js:/cryptpad/config/config.js
+      - ./data/config/config.js:/cryptpad/config/config.js
 
     ports:
       - "127.0.0.1:3000:3000"
