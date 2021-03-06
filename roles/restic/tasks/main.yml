@@ -1,0 +1,60 @@
+---
+- name: Register variable
+  set_fact:
+    resitc_password_file: /root/RESTIC_PASSWORD
+    restic_repo: /restic/backup
+
+- name: Update apt
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+    upgrade: safe
+
+- name: Ensure snapd
+  apt:
+    name:
+      - snapd
+    state: latest
+    install_recommends: yes
+
+- name: Ensure restic is present
+  snap:
+    name:
+      - restic
+    classic: yes
+
+- name: Ensure snaps are refreshed
+  shell: "snap refresh"
+  become: yes
+
+- name: Check if restic PW file exists
+  stat: 
+    path: "{{ resitc_password_file }}"
+  register: resitc_password
+
+- name: Ensure random password
+  shell: "( tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 256 ) > {{ resitc_password_file }}"
+  become: yes
+  when: resitc_password.stat.exists == False
+
+- name: Ensure permissions of password file
+  ansible.builtin.file:
+    path: "{{ resitc_password_file }}"
+    owner: root
+    group: root
+    mode: '0400'
+
+- name: Ensure restic backup directory
+  ansible.builtin.file:
+    path: "{{ restic_repo }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0700'
+
+- name: Ensure repository is initalized
+  shell: "restic snapshots > /dev/null || restic init"
+  become: yes
+  environment:
+    RESTIC_PASSWORD_FILE: "{{ resitc_password_file }}"
+    RESTIC_REPOSITORY: "{{ restic_repo }}"
