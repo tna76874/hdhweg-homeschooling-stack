@@ -35,11 +35,6 @@
     src: env.j2
     dest: "/srv/cryptpad/.env"
 
-- name: Ensure cryptpad config file
-  template:
-    src: config.js
-    dest: "/srv/cryptpad/data/config/config.js"
-
 - name: Ensure cryptpad nginx conf is present
   template:
     src: cryptpad.nginx
