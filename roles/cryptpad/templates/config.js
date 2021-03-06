@@ -42,11 +42,11 @@ module.exports = {
  *
  *  In a production instance this should be available ONLY over HTTPS
  *  using the default port for HTTPS (443) ie. https://cryptpad.fr
- *  In such a case this should be handled by NGINX, as documented in
+ *  In such a case this should be also handled by NGINX, as documented in
  *  cryptpad/docs/example.nginx.conf (see the $main_domain variable)
  *
  */
-    httpUnsafeOrigin: 'http://localhost:3000',
+    httpUnsafeOrigin: 'http://localhost:3000/',
 
 /*  httpSafeOrigin is the URL that is used for the 'sandbox' described above.
  *  If you're testing or developing with CryptPad on your local machine then
@@ -64,7 +64,7 @@ module.exports = {
  *
  *  CUSTOMIZE AND UNCOMMENT THIS FOR PRODUCTION INSTALLATIONS.
  */
-    // httpSafeOrigin: "https://cryptpad.werkgymnasium.eu",
+    // httpSafeOrigin: "https://some-other-domain.xyz",
 
 /*  httpAddress specifies the address on which the nodejs server
  *  should be accessible. By default it will listen on 127.0.0.1
@@ -72,7 +72,7 @@ module.exports = {
  *  all addresses, including IPv6, set this to '::'.
  *
  */
-    httpAddress: '::',
+    //httpAddress: '::',
 
 /*  httpPort specifies on which port the nodejs server should listen.
  *  By default it will serve content over port 3000, which is suitable
@@ -80,14 +80,14 @@ module.exports = {
  *  which will proxy websocket traffic to your node server.
  *
  */
-    httpPort: 3000,
+    //httpPort: 3000,
 
 /*  httpSafePort allows you to specify an alternative port from which
  *  the node process should serve sandboxed assets. The default value is
  *  that of your httpPort + 1. You probably don't need to change this.
  *
  */
-    httpSafePort: 3001,
+    //httpSafePort: 3001,
 
 /*  CryptPad will launch a child process for every core available
  *  in order to perform CPU-intensive tasks in parallel.
@@ -104,13 +104,13 @@ module.exports = {
     /*
      *  CryptPad contains an administration panel. Its access is restricted to specific
      *  users using the following list.
-     *  To give access to the admin panel to a user account, just add their user id,
-     *  which can be found on the settings page for registered users.
+     *  To give access to the admin panel to a user account, just add their public signing
+     *  key, which can be found on the settings page for registered users.
      *  Entries should be strings separated by a comma.
      */
 /*
     adminKeys: [
-        //"https://my.awesome.website/user/#/1/cryptpad-user1/YZgXQxKR0Rcb6r6CmxHPdAGLVludrAF2lEnkbx1vVOo=",
+        //"[cryptpad-user1@my.awesome.website/YZgXQxKR0Rcb6r6CmxHPdAGLVludrAF2lEnkbx1vVOo=]",
     ],
 */
 
@@ -137,12 +137,12 @@ module.exports = {
      *  You can disable any solicitations for donations by setting 'removeDonateButton' to true,
      *  but we'd appreciate it if you didn't!
      */
-    removeDonateButton: true,
+    //removeDonateButton: false,
 
     /*  CryptPad will display a point of contact for your instance on its contact page
      *  (/contact.html) if you provide it below.
      */
-    adminEmail: 'noreply@hdhweg.de',
+    adminEmail: 'i.did.not.read.my.config@cryptpad.fr',
 
     /*
      *  By default, CryptPad contacts one of our servers once a day.
@@ -152,7 +152,7 @@ module.exports = {
      *
      *  If you want to block this check-in and remain set 'blockDailyCheck' to true.
      */
-    blockDailyCheck: true,
+    //blockDailyCheck: false,
 
     /*
      *  By default users get 50MB of storage by registering on an instance.
@@ -175,7 +175,7 @@ module.exports = {
      *
      *  defaults to 90 days if nothing is provided
      */
-    // inactiveTime: 90, // days
+    //inactiveTime: 90, // days
 
     /*  CryptPad archives some data instead of deleting it outright.
      *  This archived data still takes up space and so you'll probably still want to
@@ -191,6 +191,25 @@ module.exports = {
      *  defaults to 15 days if nothing is provided
      */
     //archiveRetentionTime: 15,
+
+    /*  It's possible to configure your instance to remove data
+     *  stored on behalf of inactive accounts. Set 'accountRetentionTime'
+     *  to the number of days an account can remain idle before its
+     *  documents and other account data is removed.
+     *
+     *  Leave this value commented out to preserve all data stored
+     *  by user accounts regardless of inactivity.
+     */
+     //accountRetentionTime: 365,
+
+    /*  Starting with CryptPad 3.23.0, the server automatically runs
+     *  the script responsible for removing inactive data according to
+     *  your configured definition of inactivity. Set this value to `true`
+     *  if you prefer not to remove inactive data, or if you prefer to
+     *  do so manually using `scripts/evict-inactive.js`.
+     */
+    //disableIntegratedEviction: true,
+
 
     /*  Max Upload Size (bytes)
      *  this sets the maximum size of any one file uploaded to the server.
@@ -209,12 +228,12 @@ module.exports = {
      */
 /*
     customLimits: {
-        "https://my.awesome.website/user/#/1/cryptpad-user1/YZgXQxKR0Rcb6r6CmxHPdAGLVludrAF2lEnkbx1vVOo=": {
+        "[cryptpad-user1@my.awesome.website/YZgXQxKR0Rcb6r6CmxHPdAGLVludrAF2lEnkbx1vVOo=]": {
             limit: 20 * 1024 * 1024 * 1024,
             plan: 'insider',
             note: 'storage space donated by my.awesome.website'
         },
-        "https://my.awesome.website/user/#/1/cryptpad-user2/GdflkgdlkjeworijfkldfsdflkjeEAsdlEnkbx1vVOo=": {
+        "[cryptpad-user2@my.awesome.website/GdflkgdlkjeworijfkldfsdflkjeEAsdlEnkbx1vVOo=]": {
             limit: 10 * 1024 * 1024 * 1024,
             plan: 'insider',
             note: 'storage space donated by my.awesome.website'
@@ -288,7 +307,7 @@ module.exports = {
     /*  CryptPad can log activity to stdout
      *  This may be useful for debugging
      */
-    logToStdout: true,
+    logToStdout: false,
 
     /* CryptPad can be configured to log more or less
      * the various settings are listed below by order of importance
