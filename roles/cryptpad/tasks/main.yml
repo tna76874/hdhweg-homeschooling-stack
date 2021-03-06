@@ -36,9 +36,10 @@
     dest: "/srv/cryptpad/.env"
 
 - name: Ensure cryptpad config file
-  template:
+  copy:
     src: config.js
     dest: "/srv/cryptpad/data/config/config.js"
+    force: no
 
 - name: Ensure cryptpad nginx conf is present
   template:
