@@ -113,7 +113,7 @@
     - mailserver
 
 - name: Ensure restic
-  hosts: vpnserver
+  hosts: all
   become: yes
   tags: restic
   roles:
