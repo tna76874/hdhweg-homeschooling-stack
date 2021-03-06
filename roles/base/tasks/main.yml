@@ -124,5 +124,6 @@
     mode: 0755
   with_items:
     - "dockerexport.sh"
+    - "backup.sh"
 
 - import_tasks: firewall.yml
