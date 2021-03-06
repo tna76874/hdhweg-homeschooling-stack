@@ -23,6 +23,7 @@
     state: directory
   loop:
     - { path: "/srv/cryptpad", owner: "cryptpad" }
+    - { path: "/srv/cryptpad/data/config", owner: "999" }
 
 - name: Ensure docker-compose.yml for cryptpad
   template:
