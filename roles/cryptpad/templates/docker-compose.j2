@@ -7,6 +7,7 @@ services:
     image: "promasu/cryptpad"
     hostname: cryptpad
     container_name: cryptpad
+    restart: always
 
     environment:
       - CPAD_MAIN_DOMAIN={{ nginx_domain_name }}
