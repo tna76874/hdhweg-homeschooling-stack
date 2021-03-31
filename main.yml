@@ -112,7 +112,7 @@
   vars_files:
     - vars.yml
   vars:
-    domain_name: "{{ main_domain }}"
+    domain_name: "{{ main_domain_name }}"
     restic_to_backup: "/srv/mailserver"
   roles:
     - restic
