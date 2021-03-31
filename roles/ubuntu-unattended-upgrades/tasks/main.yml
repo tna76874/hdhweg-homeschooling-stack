@@ -13,6 +13,14 @@
     state: absent
     purge: yes
 
+- name: Ensure absent sendmail service
+  file:
+    path: /etc/init.d/sendmail
+    state: absent
+  notify:
+    - stop sendmail
+    - reload systemd
+
 - name: Enable automatic update / upgrade
   copy:
     content: |
