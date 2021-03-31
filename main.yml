@@ -143,7 +143,7 @@
   hosts: all
   become: yes
   vars:
-    restic_backup: /srv
+    restic_to_backup: /srv
   tags: [ 'never', 'backup' ]
   roles:
-    - restic_backup
+    - restic

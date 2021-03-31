@@ -1,0 +1,7 @@
+---
+# in this file the password for the restic repo is stored
+restic_password_file: "/root/RESTIC_PASSWORD"
+# location of th restic repo
+restic_repo: "/restic/backup"
+# directory restic is going to backup
+restic_to_backup:
