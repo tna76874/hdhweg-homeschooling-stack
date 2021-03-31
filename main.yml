@@ -100,16 +100,22 @@
     - docker
     - collabora
 
-- name: Mailserver
-  hosts: all
+- name: Deploy mailserver
+  collections:
+    - community.docker
+  hosts: 
+    - all
   become: yes
-  vars_files:
-    - vars.yml
   tags:
     - mailserver
+    - never
+  vars_files:
+    - vars.yml
   vars:
     domain_name: "{{ main_domain }}"
+    restic_to_backup: "/srv/mailserver"
   roles:
+    - restic
     - docker
     - mailserver
 

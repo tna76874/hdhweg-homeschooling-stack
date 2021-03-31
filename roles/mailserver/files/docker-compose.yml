@@ -1,0 +1,22 @@
+version: '3.8'
+services:
+  mail:
+    image: docker.io/mailserver/docker-mailserver:latest
+    hostname: ${HOSTNAME}
+    domainname: ${DOMAINNAME}
+    container_name: ${CONTAINER_NAME}
+    env_file: mailserver.env
+    ports:
+      - "25:25"
+      - "143:143"
+      - "587:587"
+      - "993:993"
+    volumes:
+      - ./maildata:/var/mail
+      - ./mailstate:/var/mail-state
+      - ./maillogs:/var/log/mail
+      - ./config/:/tmp/docker-mailserver/${SELINUX_LABEL}
+      - /etc/letsencrypt/live/${HOSTNAME}.${DOMAINNAME}/fullchain.pem:/etc/letsencrypt/live/${HOSTNAME}.${DOMAINNAME}/fullchain.pem
+      - /etc/letsencrypt/live/${HOSTNAME}.${DOMAINNAME}/privkey.pem:/etc/letsencrypt/live/${HOSTNAME}.${DOMAINNAME}/privkey.pem
+    cap_add: [ "NET_ADMIN", "SYS_PTRACE" ]
+    restart: always

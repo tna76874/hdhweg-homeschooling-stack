@@ -56,10 +56,43 @@ Run the playbook to fully set up your server.
 $ sudo ansible-playbook main.yml
 ```
 
-Initial start cryptpad, jitsi and the whiteboard. A watchtower instance keeps these docker-images up-to-date. Every night the whiteboard-docker gets restarted via cron.
+Initial start cryptpad, jitsi and the whiteboard. Every night the whiteboard-docker gets restarted via cron.
 
 ```bash
-sudo ansible-playbook /root/hdhweg-homeschooling-stack/main.yml --tags startdockers
+sudo ansible-playbook /root/hdhweg-homeschooling-stack/main.yml -t startdockers
 ```
 
 If you want, you can start rocketchat, and mumble by entering the directorys in  `/srv/` and either just start the application by `docker-compose up` or initally setup the application by `./install.sh`.
+
+### Backups
+
+Backups are important! In this repository `restic` is implemented to perform snapshots of the `/srv` folder. To perform a backup run:
+
+```bash
+sudo ansible-playbook /root/hdhweg-homeschooling-stack/main.yml -t backup
+```
+
+It is strongly advised to copy the restic-repository `/restic` to a local resource, e.g. with `scp`. Do not forget to save the random generated password `/root/RESTIC_PASSWORD` - otherwise you will not have access to the snapshots that are encrypted by default.
+
+Every [restic command](https://restic.readthedocs.io/en/latest/045_working_with_repos.html) can be called with the script `backup.sh`, e.g.:
+
+```bash
+backup.sh snapshots
+```
+
+### Mailserver
+
+A [mailserver](https://github.com/docker-mailserver/docker-mailserver) is very handy if it comes to sending out notifications to users, e.g. with the Rocket.Chat server. Ensure, that the subdomain `mail` points to your VM. Set up the mailserver with:
+
+```bash
+sudo ansible-playbook /root/hdhweg-homeschooling-stack/main.yml -t mailserver
+```
+
+With this command, first a restic backup of the mailserver directory will be perfomed, the setup and the env files are updated and the latest docker image gets pulled. Initially a user `postmaster` gets created with the script `setup.sh` and a randomly generated password. Update the user with a password of your choice - therefore study the [wiki](https://github.com/docker-mailserver/docker-mailserver/wiki/setup.sh).
+
+##### DKIM, SPF and DMARC
+
+To prevent that the emails send from your mailserver gets identified by spam, set the DKIM, SPF and DMARC DNS entrys in the config page of your dns provider. These configs are stored in `/srv/mailserver/dnsconfig.log`. It is also advised to set a reverse DNS in the config page of your VPS provider to point from your IP-adress to the `mail.` subdomain.
+
+
+

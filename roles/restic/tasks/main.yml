@@ -4,6 +4,11 @@
     path: "{{ restic_password_file }}"
   register: restic_password
 
+- name: Check if restic backup directoy exists
+  stat: 
+    path: "{{ restic_to_backup }}"
+  register: CHECK_restic_to_backup
+
 - import_tasks: initiate.yml
   when: restic_password.stat.exists == False
 
@@ -13,4 +18,4 @@
   environment:
     RESTIC_PASSWORD_FILE: "{{ restic_password_file }}"
     RESTIC_REPOSITORY: "{{ restic_repo }}"
-  when: restic_to_backup != None
+  when: restic_to_backup != None and CHECK_restic_to_backup.stat.exists

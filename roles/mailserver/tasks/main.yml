@@ -1,36 +1,79 @@
 ---
-- name: Ensure git and docker-compose is available
-  apt:
-    name:
-    - git
-    - docker-compose
-    - docker
-    state: present
+- stat: path="{{ project_root }}/.env"
+  register: env_file
 
-- name: Create user
-  user:
-    name: mailserver
-    shell: /bin/bash
-    password: '!'
-    update_password: on_create
-    groups: docker
-    state: present
+- stat: path="{{ project_root }}/dnsconfig.log"
+  register: dns_file
 
-- name: Ensure base / data directories for mailserver exist
+- name: Ensure docker-compose down
+  docker_compose:
+    project_src: "{{ project_root }}"
+    state: absent
+  ignore_errors: yes
+  when: env_file.stat.exists
+
+- name: Ensure directories
   file:
     path: "{{ item.path }}"
     owner: "{{ item.owner }}"
     state: directory
   loop:
-    - { path: "/srv/mailserver", owner: "mailserver" }
+    - { path: "{{ project_root }}", owner: "root" }    
 
-- name: Ensure docker-compose.yml for mailserver
-  template:
-    src: docker-compose.j2
-    dest: "/srv/mailserver/docker-compose.yml.example"
+- name: Ensure files
+  copy:
+    src: "{{ item.file }}"
+    dest: "{{ item.destination }}"
+    owner: "{{ item.owner }}"
+    mode: "{{ item.mode }}"
+  loop:
+    - { file: "docker-compose.yml", destination: "{{ project_root }}/docker-compose.yml", owner: "root", mode: "0755" }
 
-- name: Ensure mailserver install script
+- name: Ensure source files from github
+  get_url:
+    url: "{{ item.file }}"
+    dest: "{{ item.destination }}"
+    force: "{{ item.force }}"
+    owner: "{{ item.owner }}"
+    mode: "{{ item.mode }}"
+  loop:
+    - { file: "https://raw.githubusercontent.com/docker-mailserver/docker-mailserver/master/setup.sh", destination: "{{ project_root }}/setup.sh", force: "no", owner: "root", mode: "0775"}
+    - { file: "https://raw.githubusercontent.com/docker-mailserver/docker-mailserver/master/mailserver.env", destination: "{{ project_root }}/mailserver.env", force: "no", owner: "root", mode: "0775"}
+  become: yes
+
+- name: Ensure templates
   template:
-    src: install.j2
-    dest: "/srv/mailserver/install.sh"
-    mode: 0777
+    src: "{{ item.file }}"
+    dest: "{{ item.destination }}"
+    owner: "{{ item.owner }}"
+    mode: "{{ item.mode }}"
+    force: "{{ item.force }}"
+  loop:
+    - { file: "env.j2", destination: "{{ project_root }}/.env", owner: "root", mode: "0644", force: "no" }
+    - { file: "install.j2", destination: "{{ project_root }}/install.sh", owner: "root", mode: "0755", force: "yes" }
+  become: yes
+
+- name: Ensure SSL-type letsencrypt
+  lineinfile:
+    path: "{{ project_root }}/mailserver.env"
+    state: present
+    regexp: '^SSL_TYPE=(.*)'
+    line: 'SSL_TYPE=letsencrypt'
+  become: yes
+
+- import_tasks: letsencrypt.yml
+
+- name: Ensure docker-compose up
+  docker_compose:
+    project_src: "{{ project_root }}"
+    pull: yes
+
+- name: Ensure inital user and dnsconfig
+  shell: "./install.sh -k"
+  args:
+    chdir: "{{ project_root }}"
+  become: yes
+  when: dns_file.stat.exists == False
+  notify:
+    - compose down
+    - compose up

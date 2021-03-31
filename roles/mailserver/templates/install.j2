@@ -1,7 +1,15 @@
 #!/bin/bash
+SCRIPT=$(readlink -f "$0")
+DIR=$(dirname "$SCRIPT")
+DATA="$DIR/data"
+BUILDDIR="$DIR/docker-build"
+
+export EXPORT_FILE="$DIR/images.tar"
+export BACKUP_DIR="$DIR/backup"
+
 ## Define some functions
 function generatePassword() {
-    openssl rand -hex 16
+    tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 64
 }
 
 confirm() {
@@ -17,68 +25,57 @@ confirm() {
     esac
 }
 
+isfile() {
+  if [[ -r "${1:-}" ]]; then
+      true
+      return
+  fi
+  false
+  return
+}
+
+
 #Download setup.sh and environments
 environment() {
     if [ ! -f setup.sh ]; then
-        curl -o setup.sh https://raw.githubusercontent.com/tomav/docker-mailserver/master/setup.sh; chmod a+x ./setup.sh
+        wget -O setup.sh https://raw.githubusercontent.com/docker-mailserver/docker-mailserver/master/setup.sh; chmod a+x ./setup.sh
     fi
-    if [ ! -f .env ]; then
-        curl -o .env https://raw.githubusercontent.com/tomav/docker-mailserver/master/template.env
-    fi
-    if [ ! -f env-mailserver ]; then
-        wget https://raw.githubusercontent.com/tomav/docker-mailserver/master/env-mailserver
+    if [ ! -f mailserver.env ]; then
+        wget https://raw.githubusercontent.com/docker-mailserver/docker-mailserver/master/mailserver.env
     fi
     if [ ! -f docker-compose.yml ]; then
         cp docker-compose.yml.example docker-compose.yml
     fi
     source .env
 
-    DOMAINNAME={{ domain_name }}
+    read -e -p "HOSTNAME: " -i "mail" HOSTNAME
+    read -e -p "DOMAINNAME: " -i "$DOMAINNAME" DOMAINNAME
+    read -e -p "CONTAINER_NAME: " -i "$HOSTNAME" CONTAINER_NAME
 
     sed -i \
+        -e "s#HOSTNAME=.*#HOSTNAME=${HOSTNAME}#g" \
         -e "s#DOMAINNAME=.*#DOMAINNAME=${DOMAINNAME}#g" \
+        -e "s#CONTAINER_NAME=.*#CONTAINER_NAME=${CONTAINER_NAME}#g" \
         "$(dirname "$0")/.env"
 
-    sed -i 's/SSL_TYPE=.*/SSL_TYPE=letsencrypt/g' env-mailserver
+    sed -i 's/SSL_TYPE=.*/SSL_TYPE=letsencrypt/g' mailserver.env
 
 }
 
 #(Re)generate letsencrypt certificates
 certificates() {
-    if [ ! -f .env ]; then
-        echo -e "No .env file found."
-    else
-        source .env
-        DIR="${PWD}"
-
-        sudo rm -rf letsencrypt
-        mkdir -p letsencrypt
-
-        cd "$DIR"
-        sudo service nginx stop
-        docker-compose down
-        sleep 3
-        cd letsencrypt
-        docker run --rm -ti -v $PWD/log/:/var/log/letsencrypt/ -v $PWD/etc/:/etc/letsencrypt/ -p 80:80 certbot/certbot certonly --standalone -d "${HOSTNAME}"."${DOMAINNAME}"
-        sudo service nginx start
-        cd "$DIR"
+cd "$DIR"
+if [ ! -f .env ]; then
+        echo -e "No .env file found." 
+else
+    source .env
+    DOMAIN="${HOSTNAME}.${DOMAINNAME}"
+    if $(confirm "--Purge all keys in /etc/letsencrypt/[live|archive]/${DOMAIN}*?") ; then
+        sudo rm -rf /etc/letsencrypt/live/${DOMAIN}*
+        sudo rm -rf /etc/letsencrypt/archive/${DOMAIN}*
     fi
-}
-
-#Renew certificates
-renew() {
-    DIR="${PWD}"
-
-    cd "$DIR"
-    sudo service nginx stop
-    docker-compose down
-    sleep 3
-    cd letsencrypt
-    docker run --rm -ti -v $PWD/log/:/var/log/letsencrypt/ -v $PWD/etc/:/etc/letsencrypt/ -p 80:80 -p 443:443 certbot/certbot renew
-    sudo service nginx start
-
-    cd "$DIR"
-    docker-compose up -d mail
+    sudo certbot certonly --standalone --expand -d "${DOMAIN}"
+fi
 }
 
 #Generate dnsconfig file
@@ -101,66 +98,59 @@ firstsetup() {
     source .env
     DIR="${PWD}"
     if [ ! -f ./config/opendkim/keys/"$DOMAINNAME"/mail.txt ]; then
+        docker-compose up -d
         USER="mail"
-        read -e -p "User $USER@$DOMAINNAME: " -i "$USER" USER
-        ./setup.sh email add "$USER"@$DOMAINNAME
-        ./setup.sh config dkim
-        docker-compose down
-        docker pull tvial/docker-mailserver:latest
-        docker-compose up -d mail
+        # change password afterwards via config file
+        INITIAL_PW=$(generatePassword)
+        ./setup.sh email add {{ default_user }}@$DOMAINNAME "$INITIAL_PW" || exit 1
+        ./setup.sh config dkim && getdnsconfig
     fi
-    getdnsconfig
 }
 
-#Enable cronjob to renew certificates
-enablecron() {
-CRONTAB="SHELL=/bin/sh\nPATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin\n
-15 3 * * * (cd ${PWD} ; ./install.sh -r)&
-"
-echo -e "$CRONTAB" > /etc/cron.d/mailcerts
-}
+# make zip dir of whole mailfolder
+backup_all() {
+    mkdir -p "$BACKUP_DIR"
 
-#Disable cronjob to renew certificates
-disablecron() {
-rm -f /etc/cron.d/mailcerts
+    cd "$DIR"/..
+    ZIPPATH=$( realpath --relative-to=. "$DIR")
+    IGNORE=$( realpath --relative-to=. "$BACKUP_DIR")
+
+    TIMESTAMP=$(date +"%Y-%m-%d-%H-%M-%S")
+    sudo zip -r "$BACKUP_DIR"/backup-$TIMESTAMP.zip "$ZIPPATH" -x "$IGNORE"/**\*
+    sudo chown -R "$UID":"$UID" "$BACKUP_DIR"
 }
 
 # ###### Parsing arguments
-
 #Usage print
 usage() {
-    echo "Usage: $0 -[i|c|r|s|e|d]" >&2
+    echo "Usage: $0 -[s|c|k|d|r|h]" >&2
     echo "
-   -i,    Initialize setup.sh and environments
+   -s,    Initialize setup.sh and environments
    -c,    (Re)generate letsencrypt certificates
-   -r,    Renew certificates
-   -s,    Setup the mailserver and dkim config
-   -e,    Enable cronjob to renew certificates
-   -d,    Disable cronjob to renew certificates
+   -k,    Setup the mailserver with default user and dkim config
+   -d,    Generate dkim config
+   -r,    Backup everything into zip archive
    -h,    Print this help text
-
-If the script will be called without parameters, it will start all steps one after another.
    "
     exit 1
 }
 
-while getopts ':icrsedh' opt
-#putting : in the beginnnig suppresses the errors for invalid options
+while getopts ':sckdr' opt
 do
 case "$opt" in
-   'i')environment;
+   's')environment;
        ;;
    'c')certificates;
        ;;
-   'r')renew;
-       ;; 
-   's')firstsetup;
+   'k')firstsetup;
        ;;
-   'e')enablecron;
+   'd')getdnsconfig;
        ;;
-   'd')disablecron;
+   'e')export_docker_images;
        ;;
-   'h')usage;
+   'i')import_docker_images;
+       ;;
+   'r')backup_all;
        ;;
     *) usage;
        ;;
@@ -175,9 +165,6 @@ if [ $OPTIND -eq 1 ]; then
     fi
     if $(confirm "Setup the mailserver and dkim config?") ; then
         firstsetup
-    fi
-    if $(confirm "Enable cronjob to renew certificates?") ; then
-        enablecron
     fi
 fi
 
