@@ -16,18 +16,20 @@
   file:
     path: "{{ item.path }}"
     owner: "{{ item.owner }}"
+    group: "{{ item.owner }}"
     state: directory
   loop:
-    - { path: "{{ project_root }}", owner: "root" }    
+    - { path: "{{ project_root }}", owner: "{{ mailserver_user }}" }    
 
 - name: Ensure files
   copy:
     src: "{{ item.file }}"
     dest: "{{ item.destination }}"
     owner: "{{ item.owner }}"
+    group: "{{ item.owner }}"
     mode: "{{ item.mode }}"
   loop:
-    - { file: "docker-compose.yml", destination: "{{ project_root }}/docker-compose.yml", owner: "root", mode: "0755" }
+    - { file: "docker-compose.yml", destination: "{{ project_root }}/docker-compose.yml", owner: "{{ mailserver_user }}", mode: "0755" }
 
 - name: Ensure source files from github
   get_url:
@@ -35,10 +37,11 @@
     dest: "{{ item.destination }}"
     force: "{{ item.force }}"
     owner: "{{ item.owner }}"
+    group: "{{ item.owner }}"
     mode: "{{ item.mode }}"
   loop:
-    - { file: "https://raw.githubusercontent.com/docker-mailserver/docker-mailserver/master/setup.sh", destination: "{{ project_root }}/setup.sh", force: "no", owner: "root", mode: "0775"}
-    - { file: "https://raw.githubusercontent.com/docker-mailserver/docker-mailserver/master/mailserver.env", destination: "{{ project_root }}/mailserver.env", force: "no", owner: "root", mode: "0775"}
+    - { file: "https://raw.githubusercontent.com/docker-mailserver/docker-mailserver/master/setup.sh", destination: "{{ project_root }}/setup.sh", force: "no", owner: "{{ mailserver_user }}", mode: "0775"}
+    - { file: "https://raw.githubusercontent.com/docker-mailserver/docker-mailserver/master/mailserver.env", destination: "{{ project_root }}/mailserver.env", force: "no", owner: "{{ mailserver_user }}", mode: "0775"}
   become: yes
 
 - name: Ensure templates
@@ -46,11 +49,12 @@
     src: "{{ item.file }}"
     dest: "{{ item.destination }}"
     owner: "{{ item.owner }}"
+    group: "{{ item.owner }}"
     mode: "{{ item.mode }}"
     force: "{{ item.force }}"
   loop:
-    - { file: "env.j2", destination: "{{ project_root }}/.env", owner: "root", mode: "0644", force: "no" }
-    - { file: "install.j2", destination: "{{ project_root }}/install.sh", owner: "root", mode: "0755", force: "yes" }
+    - { file: "env.j2", destination: "{{ project_root }}/.env", owner: "{{ mailserver_user }}", mode: "0644", force: "no" }
+    - { file: "install.j2", destination: "{{ project_root }}/install.sh", owner: "{{ mailserver_user }}", mode: "0755", force: "yes" }
   become: yes
 
 - name: Ensure SSL-type letsencrypt

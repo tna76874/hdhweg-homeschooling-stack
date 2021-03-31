@@ -3,3 +3,5 @@
 default_user: postmaster
 # setting deploy directory
 project_root: /srv/mailserver
+# maisler user
+mailserver_user: root
