@@ -4,8 +4,14 @@
   apt:
     name:
       - unattended-upgrades
-      - sendmail
     cache_valid_time: 86400
+
+- name: Ensure apt packages absent
+  apt:
+    name:
+      - sendmail
+    state: absent
+    purge: yes
 
 - name: Enable automatic update / upgrade
   copy:
