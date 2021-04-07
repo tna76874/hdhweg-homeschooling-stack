@@ -31,7 +31,7 @@ config_start_audio_N: 3
 config_start_video_N: 3
 config_require_name: 'true'
 config_default_language: de
-config_third_party_request: 'false'
+config_disable_third_party_request: 'true'
 config_enable_layer_suspension: 'true'
 config_full_res_N: 2
 # interface.js configs
@@ -41,6 +41,10 @@ config_name: 'Jitsi Meet'
 config_optimal_browsers: '[ ''chrome'', ''chromium'', ''nwjs'', ''electron'' ]'
 config_unsupported_browsers: '[ ''safari'', ''firefox'' ]'
 config_support_url: 'https://community.jitsi.org/'
-# custom logo (store file in 'files' folder in the ansible root folder of the host machine)
+## custom logo (store file in 'files' folder in the ansible root folder of the host machine)
 config_logo_file:
-
+## resolution settings
+config_res_h_max: 480
+config_res_h_min: 240
+config_res_w_max: 720
+config_res_w_min: 360
