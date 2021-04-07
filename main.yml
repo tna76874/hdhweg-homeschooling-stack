@@ -41,14 +41,20 @@
     - whiteboard
 
 - name: Jitsi
-  hosts: all
+  collections:
+    - community.docker
+  hosts:
+    - all
   become: yes
-  vars_files:
-    - vars.yml
   tags:
     - jitsi
+    - never
+  vars_files:
+    - vars.yml
   vars:
     nginx_domain_name: "jitsi.{{ main_domain }}"
+    docker_config_project: jitsi
+    project_root: /srv/jitsi
   roles:
     - nginx
     - nginx-tls-add

@@ -1,0 +1,32 @@
+---
+- name: add images volume mount
+  lineinfile:
+    path: "{{ project_root }}/docker-compose.yml"
+    state: "present"
+    line: '            - ${CONFIG}/images:/usr/share/jitsi-meet/images/custom:ro'
+    insertafter: '(.*)volumes:(.*)'
+    firstmatch: yes
+  become: yes
+  notify:
+    - compose down
+    - compose up
+
+- name: Ensure logo file
+  copy:
+    src: "{{ config_logo_file }}"
+    dest: "{{ project_root }}/data/images/{{ config_logo_file }}"
+    remote_src: no
+
+- name: Ensure interface.js configs
+  lineinfile:
+    path: "{{ project_root }}/data/web/interface_config.js"
+    state: "{{ item.state }}"
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  become: yes
+  loop:
+    - { regexp: '(.*)DEFAULT_LOGO_URL(.*)', line: 'DEFAULT_LOGO_URL: ''images/custom/{{ config_logo_file }}'',', state: "present" }
+    - { regexp: '(.*)DEFAULT_WELCOME_PAGE_LOGO_URL(.*)', line: 'DEFAULT_WELCOME_PAGE_LOGO_URL: ''images/custom/{{ config_logo_file }}'',', state: "present" }
+  notify:
+    - compose down
+    - compose up
