@@ -9,8 +9,6 @@ docker_config_project: jitsi
 start_compose: true
 # remove all configs and install from scratch
 fresh_install: false
-# mongo startup command
-tcp_port: 3642
 # running user
 server_user: root
 # project root
