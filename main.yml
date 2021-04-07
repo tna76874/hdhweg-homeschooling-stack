@@ -8,6 +8,9 @@
     - vars.yml
   roles:
     - base
+    - docker
+    - nginx
+    - restic
     - ubuntu-unattended-upgrades
 
 - name: Rocketchat
@@ -27,7 +30,6 @@
   roles:
     - restic
     - nginx-tls-add
-    - docker
     - rocket
 
 - name: Whiteboard
@@ -41,9 +43,7 @@
   vars:
     nginx_domain_name: "tafel.{{ main_domain }}"
   roles:
-    - nginx
     - nginx-tls-add
-    - docker
     - whiteboard
 
 - name: Jitsi
@@ -62,9 +62,7 @@
     docker_config_project: jitsi
     project_root: /srv/jitsi
   roles:
-    - nginx
     - nginx-tls-add
-    - docker
     - jitsi
 
 - name: Cryptpad
@@ -78,9 +76,7 @@
   vars:
     nginx_domain_name: "cryptpad.{{ main_domain }}"
   roles:
-    - nginx
     - nginx-tls-add
-    - docker
     - cryptpad
 
 - name: Mumble
@@ -94,9 +90,7 @@
   vars:
     nginx_domain_name: "mumble.{{ main_domain }}"
   roles:
-    - nginx
     - nginx-tls-add
-    - docker
     - mumble
 
 - name: Collabora
@@ -110,9 +104,7 @@
   vars:
     nginx_domain_name: "collabora.{{ main_domain }}"
   roles:
-    - nginx
     - nginx-tls-add
-    - docker
     - collabora
 
 - name: Deploy mailserver
