@@ -64,13 +64,14 @@ sudo ansible-playbook /root/hdhweg-homeschooling-stack/main.yml -t [TAG]
 
 Available tags:
 
-* rocketchat
+* [rocketchat](https://github.com/tna76874/hdhweg-homeschooling-stack/blob/master/docs/ROCKET.md) 
+*  [jitsi](https://github.com/tna76874/hdhweg-homeschooling-stack/blob/master/docs/JITSI.md) 
+* [mail](https://github.com/tna76874/hdhweg-homeschooling-stack/blob/master/docs/MAIL.md) 
+
 * whiteboard
-* jitsi
 * cryptpad
 * mumble
 * collabora
-* mail
 * security
 * backup
 
@@ -82,8 +83,6 @@ Example:
 cd /srv/cryptpad
 docker-compose up
 ```
-
-
 
 ### Backups
 
@@ -101,25 +100,5 @@ Every [restic command](https://restic.readthedocs.io/en/latest/045_working_with_
 backup.sh snapshots
 ```
 
-### Mailserver
 
-A [mailserver](https://github.com/docker-mailserver/docker-mailserver) is very handy if it comes to sending out notifications to users, e.g. with the Rocket.Chat server. Ensure, that the subdomain `mail` points to your VM. Set up the mailserver with:
-
-```bash
-sudo ansible-playbook /root/hdhweg-homeschooling-stack/main.yml -t mail
-```
-
-With this command, first a restic backup of the mailserver directory will be perfomed, the setup and the env files are updated and the latest docker image gets pulled. Initially a user `postmaster` gets created with the script `setup.sh` and a randomly generated password. Update the user with a password of your choice - therefore study the [wiki](https://github.com/docker-mailserver/docker-mailserver/wiki/setup.sh).
-
-##### DKIM, SPF and DMARC
-
-To prevent that the emails send from your mailserver gets identified by spam, set the DKIM, SPF and DMARC DNS entrys in the config page of your dns provider. These configs are stored in `/srv/mailserver/dnsconfig.log`. It is also advised to set a reverse DNS in the config page of your VPS provider to point from your IP-adress to the `mail.` subdomain.
-
-### Jitsi
-
-To set up jitsi run the playbook with the `jitsi` tag. If you want to customize your jitsi server (e.g. a logo), either place the watermark file in the folder `files` or link to a URL. Check the [variables](https://github.com/tna76874/hdhweg-homeschooling-stack/blob/master/roles/jitsi/defaults/main.yml) that you might add to `vars.yml`. 
-
-```bash
-sudo ansible-playbook /root/hdhweg-homeschooling-stack/main.yml -t jitsi
-```
 
