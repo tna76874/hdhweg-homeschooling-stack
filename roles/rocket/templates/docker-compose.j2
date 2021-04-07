@@ -1,0 +1,25 @@
+version: '3.6'
+services:
+  mongo:
+    image: mongo:4.0
+    volumes:
+      - ./data/db:/data/db
+    command: {{ cmd_mongo }}
+
+  mongo-init-replica:
+    image: mongo:4.0
+    command: {{ cmd_mongo_init }}
+    depends_on:
+      - mongo
+
+  rocketchat:
+    image: rocket.chat:latest
+    restart: always
+    environment:
+      - ROOT_URL=https://${DOMAIN}
+      - MONGO_URL=mongodb://mongo:27017/rocketchat{{ config_env_mongo }}
+      - MONGO_OPLOG_URL=mongodb://mongo:27017/local{{ config_env_mongo }}
+    depends_on:
+      - mongo
+    ports:
+      - "127.0.0.1:${TCPPORT}:3000"

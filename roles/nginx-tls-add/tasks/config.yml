@@ -11,7 +11,7 @@
 
 - name: Ensure availability of generic nginx config
   template:
-    src: a13.conf.j2
+    src: https.conf.j2
     dest: "/etc/nginx/sites-available/{{ nginx_domain_name }}.https.conf"
 
 - name: Generate dhparams

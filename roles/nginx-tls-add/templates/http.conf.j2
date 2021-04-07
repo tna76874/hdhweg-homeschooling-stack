@@ -2,6 +2,7 @@ server {
     listen 80;
     listen [::]:80;
     server_name {{ nginx_domain_name }};
+    client_max_body_size {{ upload_limit }};
 
     location /.well-known/acme-challenge {
         root /var/www/letsencrypt;

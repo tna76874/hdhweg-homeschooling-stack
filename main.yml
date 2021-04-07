@@ -11,19 +11,24 @@
     - ubuntu-unattended-upgrades
 
 - name: Rocketchat
-  hosts: all
+  hosts:
+    - all
   become: yes
   vars_files:
     - vars.yml
   tags:
     - rocketchat
+    - never
   vars:
     nginx_domain_name: "chat.{{ main_domain }}"
+    upload_limit: 500M
+    project_root: /srv/rocketchat
+    restic_to_backup: "/srv/rocketchat"
   roles:
-    - nginx
+    - restic
     - nginx-tls-add
     - docker
-    - rocketchat
+    - rocket
 
 - name: Whiteboard
   hosts: all
@@ -32,6 +37,7 @@
     - vars.yml
   tags:
     - whiteboard
+    - never
   vars:
     nginx_domain_name: "tafel.{{ main_domain }}"
   roles:
@@ -68,6 +74,7 @@
     - vars.yml
   tags:
     - cryptpad
+    - never
   vars:
     nginx_domain_name: "cryptpad.{{ main_domain }}"
   roles:
@@ -83,6 +90,7 @@
     - vars.yml
   tags:
     - mumble
+    - never
   vars:
     nginx_domain_name: "mumble.{{ main_domain }}"
   roles:
@@ -98,6 +106,7 @@
     - vars.yml
   tags:
     - collabora
+    - never
   vars:
     nginx_domain_name: "collabora.{{ main_domain }}"
   roles:
@@ -133,22 +142,14 @@
   roles:
     - restic
 
-- name: Start the most important docker containers
-  hosts: all
-  become: yes
-  vars_files:
-    - vars.yml
-  tags: [ 'never', 'startdockers' ]
-  roles:
-    - docker
-    - dockercomposeup
-
 - name: Secure the ssh server
   hosts: all
   become: yes
   vars_files:
     - vars.yml
-  tags: [ 'never', 'security' ]
+  tags:
+    - security
+    - never
   roles:
     - security
 
@@ -157,6 +158,8 @@
   become: yes
   vars:
     restic_to_backup: /srv
-  tags: [ 'never', 'backup' ]
+  tags:
+    - backup
+    - never
   roles:
     - restic

@@ -50,19 +50,40 @@ Set `collabora_domain` to the domain your collabora server should serve its cont
 
 ### Run
 
-Run the playbook to fully set up your server.
+Run the playbook to ensure basic settings of  your server.
 
 ```
 $ sudo ansible-playbook main.yml
 ```
 
-Initial start cryptpad, jitsi and the whiteboard. Every night the whiteboard-docker gets restarted via cron.
+Now you can set-up the different apps to your needs:
 
 ```bash
-sudo ansible-playbook /root/hdhweg-homeschooling-stack/main.yml -t startdockers
+sudo ansible-playbook /root/hdhweg-homeschooling-stack/main.yml -t [TAG]
 ```
 
-If you want, you can start rocketchat, and mumble by entering the directorys in  `/srv/` and either just start the application by `docker-compose up` or initally setup the application by `./install.sh`.
+Available tags:
+
+* rocketchat
+* whiteboard
+* jitsi
+* cryptpad
+* mumble
+* collabora
+* mail
+* security
+* backup
+
+To manually start or stop the containers, enter the respective folder in`/srv/` and either just start the application by `docker-compose up` or  `docker-compose down` to stop.
+
+Example:
+
+```bash
+cd /srv/cryptpad
+docker-compose up
+```
+
+
 
 ### Backups
 

@@ -1,0 +1,59 @@
+---
+- name: Ensure base / data directories
+  file:
+    path: "{{ item.path }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.owner }}"
+    state: directory
+  loop:
+    - { path: "{{ project_root }}/data", owner: "{{ server_user }}" } 
+    - { path: "{{ project_root }}/data/db", owner: "999" }      
+  notify:
+    - compose down
+    - compose up
+
+# - name: Ensure files
+#   copy:
+#     src: "{{ item.file }}"
+#     dest: "{{ item.destination }}"
+#     owner: "{{ item.owner }}"
+#     group: "{{ item.owner }}"
+#     mode: "{{ item.mode }}"
+#   loop:
+#     - { file: "docker-compose.yml", destination: "{{ project_root }}/docker-compose.yml", owner: "{{ server_user }}", mode: "0755" }
+#   notify:
+#     - compose down
+#     - compose up
+
+- name: Ensure templates
+  template:
+    src: "{{ item.file }}"
+    dest: "{{ item.destination }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.owner }}"
+    mode: "{{ item.mode }}"
+    force: "{{ item.force }}"
+  loop:
+    - { file: "env.j2", destination: "{{ project_root }}/.env", owner: "{{ server_user }}", mode: "0644", force: "yes" }
+    - { file: "docker-compose.j2", destination: "{{ project_root }}/docker-compose.yml", owner: "{{ server_user }}", mode: "0755", force: "yes" }
+  become: yes
+  notify:
+    - compose down
+    - compose up
+
+- name: Ensure rocketchat nginx conf is present
+  template:
+    src: rocketchat.nginx
+    dest: "/etc/nginx/{{ nginx_domain_name }}.d/rocketchat.conf"
+  notify:
+    - reload nginx
+
+- name: Checking restart
+  assert: { that: true, quiet: true }
+  changed_when: restart_compose
+  notify: compose down
+
+- name: Ensure docker-compose pulled and up
+  assert: { that: true, quiet: true }
+  changed_when: start_compose
+  notify: compose up

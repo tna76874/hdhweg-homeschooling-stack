@@ -1,0 +1,17 @@
+---
+# ensure docker-compose gets restarted on every run
+restart_compose: false
+# start docker by default
+start_compose: true
+# mongo startup command
+cmd_mongo: mongod --smallfiles --oplogSize 128 --replSet rs01
+# mongo init command
+cmd_mongo_init: '''mongo mongo/rocketchat --eval "rs.initiate({ _id: ''''rs01'''', members: [ { _id: 0, host: ''''mongo:27017'''' } ]})"'''
+# mongo URL options
+config_env_mongo: '?replicaSet=rs01'
+# tcp port
+tcp_port: 3642
+# running user
+server_user: root
+# project root
+project_root: /srv/rocketchat
