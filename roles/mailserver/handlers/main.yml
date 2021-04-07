@@ -1,4 +1,48 @@
 ---
+- name: ensure compose down
+  docker_compose:
+    project_src: "{{ project_root }}"
+    state: absent
+  ignore_errors: yes
+  when: compose_file.stat.exists
+
+- name: copy mailserver.env
+  copy:
+    src: "{{ project_root }}/mailserver.env.example"
+    dest: "{{ project_root }}/mailserver.env"
+    owner: "{{ mailserver_user }}"
+    group: "{{ mailserver_user }}"
+    mode: "0755"
+    remote_src: yes
+  notify:
+    - ensure configs
+
+- name: ensure configs
+  lineinfile:
+    path: "{{ project_root }}/mailserver.env"
+    state: "{{ item.state }}"
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  become: yes
+  loop:
+    - { regexp: '^SSL_TYPE=(.*)', line: 'SSL_TYPE=letsencrypt', state: "present" }
+    - { regexp: '^ENABLE_FAIL2BAN=(.*)', line: 'ENABLE_FAIL2BAN={{ config_fail2ban }}', state: "present" }
+    - { regexp: '^POSTMASTER_ADDRESS=(.*)', line: 'POSTMASTER_ADDRESS={{ config_postmaster }}', state: "present" }
+    - { regexp: '^PFLOGSUMM_TRIGGER=(.*)', line: 'PFLOGSUMM_TRIGGER={{ config_log_trigger }}', state: "present" }
+    - { regexp: '^POSTFIX_MESSAGE_SIZE_LIMIT=(.*)', line: 'POSTFIX_MESSAGE_SIZE_LIMIT={{ config_message_limit }}', state: "present" }
+  notify:
+    - compose down
+    - compose up
+
+- name: dns init
+  shell: "./install.sh -k"
+  args:
+    chdir: "{{ project_root }}"
+  become: yes
+  notify:
+    - compose down
+    - compose up
+
 - name: reload nginx
   service:
     name: nginx
@@ -13,4 +57,6 @@
   docker_compose:
     project_src: "{{ project_root }}"
     state: present
+    pull: yes
+
 

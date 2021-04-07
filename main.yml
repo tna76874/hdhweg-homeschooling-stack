@@ -113,13 +113,14 @@
     - all
   become: yes
   tags:
-    - mailserver
+    - mail
     - never
   vars_files:
     - vars.yml
   vars:
     main_domain_name: "{{ main_domain }}"
     restic_to_backup: "/srv/mailserver"
+    project_root: "/srv/mailserver"
   roles:
     - restic
     - docker

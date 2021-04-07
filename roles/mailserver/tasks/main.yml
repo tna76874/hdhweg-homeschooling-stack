@@ -1,16 +1,34 @@
 ---
-- stat: path="{{ project_root }}/.env"
+- name: Check .env file
+  stat: 
+    path: "{{ project_root }}/.env"
   register: env_file
+  changed_when: not env_file.stat.exists
 
-- stat: path="{{ project_root }}/dnsconfig.log"
+- name: Check compose file
+  stat: 
+    path: "{{ project_root }}/docker-compose.yml"
+  register: compose_file
+  changed_when: not compose_file.stat.exists
+
+- name: Check dns file
+  stat: path="{{ project_root }}/dnsconfig.log"
   register: dns_file
+  changed_when: not dns_file.stat.exists
+  notify:
+    - dns init
 
-- name: Ensure docker-compose down
-  docker_compose:
-    project_src: "{{ project_root }}"
-    state: absent
-  ignore_errors: yes
-  when: env_file.stat.exists
+- name: Query releases from github
+  uri:                                                               
+    url: https://api.github.com/repos/docker-mailserver/docker-mailserver/releases/latest
+    return_content: true                                             
+  register: github_latest_release   
+
+- name: Registering release tag
+  set_fact:
+    mailserver_release: "{{ github_latest_release['json']['tag_name'].replace('v','') }}"
+    mailserver_branch: "{{ github_latest_release['json']['tag_name'] }}"
+  when: mailserver_release == 'RELEASE'
 
 - name: Ensure directories
   file:
@@ -21,16 +39,6 @@
   loop:
     - { path: "{{ project_root }}", owner: "{{ mailserver_user }}" }    
 
-- name: Ensure files
-  copy:
-    src: "{{ item.file }}"
-    dest: "{{ item.destination }}"
-    owner: "{{ item.owner }}"
-    group: "{{ item.owner }}"
-    mode: "{{ item.mode }}"
-  loop:
-    - { file: "docker-compose.yml", destination: "{{ project_root }}/docker-compose.yml", owner: "{{ mailserver_user }}", mode: "0755" }
-
 - name: Ensure source files from github
   get_url:
     url: "{{ item.file }}"
@@ -40,9 +48,12 @@
     group: "{{ item.owner }}"
     mode: "{{ item.mode }}"
   loop:
-    - { file: "https://raw.githubusercontent.com/docker-mailserver/docker-mailserver/master/setup.sh", destination: "{{ project_root }}/setup.sh", force: "no", owner: "{{ mailserver_user }}", mode: "0775"}
-    - { file: "https://raw.githubusercontent.com/docker-mailserver/docker-mailserver/master/mailserver.env", destination: "{{ project_root }}/mailserver.env", force: "no", owner: "{{ mailserver_user }}", mode: "0775"}
+    - { file: "https://raw.githubusercontent.com/docker-mailserver/docker-mailserver/{{ mailserver_branch | default('master') }}/setup.sh", destination: "{{ project_root }}/setup.sh", force: "no", owner: "{{ mailserver_user }}", mode: "0775"}
+    - { file: "https://raw.githubusercontent.com/docker-mailserver/docker-mailserver/{{ mailserver_branch | default('master') }}/mailserver.env", destination: "{{ project_root }}/mailserver.env.example", force: "no", owner: "{{ mailserver_user }}", mode: "0775"}
   become: yes
+  notify:
+    - ensure compose down
+    - copy mailserver.env
 
 - name: Ensure templates
   template:
@@ -53,31 +64,24 @@
     mode: "{{ item.mode }}"
     force: "{{ item.force }}"
   loop:
-    - { file: "env.j2", destination: "{{ project_root }}/.env", owner: "{{ mailserver_user }}", mode: "0644", force: "no" }
+    - { file: "env.j2", destination: "{{ project_root }}/.env", owner: "{{ mailserver_user }}", mode: "0644", force: "yes" }
     - { file: "install.j2", destination: "{{ project_root }}/install.sh", owner: "{{ mailserver_user }}", mode: "0755", force: "yes" }
+    - { file: "docker-compose.j2", destination: "{{ project_root }}/docker-compose.yml", owner: "{{ mailserver_user }}", mode: "0755", force: "yes" }
   become: yes
-
-- name: Ensure SSL-type letsencrypt
-  lineinfile:
-    path: "{{ project_root }}/mailserver.env"
-    state: present
-    regexp: '^SSL_TYPE=(.*)'
-    line: 'SSL_TYPE=letsencrypt'
-  become: yes
+  notify:
+    - ensure compose down
+    - copy mailserver.env
 
 - import_tasks: letsencrypt.yml
 
-- name: Ensure docker-compose up
-  docker_compose:
-    project_src: "{{ project_root }}"
-    pull: yes
+- name: Checking restart
+  assert: { that: true, quiet: true }
+  changed_when: restart_compose
+  notify: compose down
 
-- name: Ensure inital user and dnsconfig
-  shell: "./install.sh -k"
-  args:
-    chdir: "{{ project_root }}"
-  become: yes
-  when: dns_file.stat.exists == False
-  notify:
-    - compose down
+- name: Triggering handlers
+  assert: { that: true, quiet: true }
+  changed_when: true
+  notify: 
+    - ensure configs
     - compose up
