@@ -19,10 +19,10 @@
     marker: '// {mark} Ansible managed Block'
     block: |
         lastNLimits: {
-            5: 20,
-            30: 15,
-            50: 10,
-            70: 5,
+            5:  10,
+            30: 7,
+            50: 5,
+            70: 3,
             90: 2
         },
   notify:
@@ -44,6 +44,10 @@
     - { regexp: '(.*)startWithVideoMuted:(.*)', line: 'startWithVideoMuted: {{ config_start_muted_video }},', state: "present" }
     - { regexp: '(.*)requireDisplayName:(.*)', line: 'requireDisplayName: {{ config_require_name }},', state: "present" }
     - { regexp: '(.*)defaultLanguage:(.*)', line: 'defaultLanguage: ''{{ config_default_language }}'',', state: "present" }
+
+    - { regexp: '(.*)disableThirdPartyRequests:(.*)', line: 'disableThirdPartyRequests: ''{{ config_third_party_request }}'',', state: "present" }
+    - { regexp: '(.*)enableLayerSuspension:(.*)', line: 'enableLayerSuspension: ''{{ config_enable_layer_suspension }}'',', state: "present" }
+    - { regexp: '(.*)maxFullResolutionParticipants:(.*)', line: 'maxFullResolutionParticipants: ''{{ config_full_res_N }}'',', state: "present" }
     #
     - { regexp: '(.*)config.startAudioOnly(.*)', line: 'config.startAudioOnly = {{ config_start_muted_audio }};', state: "present" }
     - { regexp: '(.*)config.startAudioMuted(.*)', line: 'config.startAudioMuted = {{ config_start_audio_N }};', state: "present" }
@@ -82,6 +86,19 @@
     - { regexp: '(.*)UNSUPPORTED_BROWSERS(.*)', line: 'UNSUPPORTED_BROWSERS: {{ config_unsupported_browsers }},', state: "present" }
     - { regexp: '(.*)SUPPORT_URL(.*)', line: 'SUPPORT_URL: ''{{ config_support_url }}'',', state: "present" }
     - { regexp: '(.*)JITSI_WATERMARK_LINK(.*)', line: 'JITSI_WATERMARK_LINK: ''{{ config_support_url }}'',', state: "present" }
+  notify:
+    - compose down
+    - compose up
+
+- name: Ensure jvb logging configs
+  lineinfile:
+    path: "{{ project_root }}/data/jvb/logging.properties"
+    state: "{{ item.state }}"
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  become: yes
+  loop:
+    - { regexp: '(.*)level=(.*)', line: '.level={{ config_jvb_logging }}', state: "present" }
   notify:
     - compose down
     - compose up

@@ -22,6 +22,8 @@ jitsi_password:
 config_tcp_port: 8000
 config_lobby: 1
 config_restart_policy: always
+# jvb logging config
+config_jvb_logging: WARNING
 # config.js configs
 config_start_muted_video: 'true'
 config_start_muted_audio: 'true'
@@ -29,6 +31,9 @@ config_start_audio_N: 3
 config_start_video_N: 3
 config_require_name: 'true'
 config_default_language: de
+config_third_party_request: 'false'
+config_enable_layer_suspension: 'true'
+config_full_res_N: 2
 # interface.js configs
 config_logo_url: 'images/watermark.svg'
 config_unnamed_user: 'Fellow Jitster'
