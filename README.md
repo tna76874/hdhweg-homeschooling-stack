@@ -44,9 +44,17 @@ wget -qO setup.sh https://raw.githubusercontent.com/tna76874/hdhweg-homeschoolin
 
 Set the variable `letsencrypt_email` to your mailadress. You don't want your students to have bad warning messages on your nice websites once your letsencrypt certificates expired.
 
-Set `main_domain` to the domain that points at your VM. Be sure, that the subdomains `chat`, `tafel`, `jitsi`, `cryptpad`, `collabora`, and `mumble` also points to your VM.
-
 Set `collabora_domain` to the domain your collabora server should serve its content to, e.g. `moodle.myschool.xyz`.
+
+Set `main_domain` to the domain that points at your VM. Be sure, that the following subdomains  points to your VM:
+
+* `chat`
+* `tafel`
+* `jitsi`
+*  `cryptpad`
+*  `collabora`
+*  `mumble`
+* `mail`
 
 ### Run
 
