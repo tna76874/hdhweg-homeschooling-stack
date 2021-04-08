@@ -36,6 +36,7 @@ installing_requirements() {
 # pulling repo and updating content
 pull_repo() {
     # pulling latest changes
+    cd ${REPODIR}
     sudo git -C ${REPODIR} pull  > /dev/null 2>&1 && echo "... updated git repo ..."
 
     # install galaxy roles
@@ -90,7 +91,7 @@ fi
 
 while [ $# -gt 0 ] ; do
   case $1 in
-    -t | --tag | tag) sudo ansible-playbook ${REPODIR}/main.yml -t base,"$2" ;;
+    -t | --tag | tag) cd ${REPODIR}; sudo ansible-playbook main.yml -t base,"$2" ;;
     -b | --backup | backup) sudo restic_backup "$2" ;;
     -h | --help | help) usage ;;
   esac
