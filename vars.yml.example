@@ -8,3 +8,9 @@ letsencrypt_email: USER@MYMAIL.XYZ
 main_domain: MYDOMAIN.XYZ
 
 collabora_domain: SOMETHING\\.OTHERDOMAIN\\.XYZ
+
+# optional: add a password to your jitsi server
+jitsi_username: jitsiadmin
+jitsi_password: 
+## uncomment and place custom logo file in files folder
+#config_logo_file: mywatermark.svg

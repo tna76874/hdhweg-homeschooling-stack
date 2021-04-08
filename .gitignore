@@ -5,3 +5,4 @@ tmp/
 vault_password
 vars.yml
 files
+inventory

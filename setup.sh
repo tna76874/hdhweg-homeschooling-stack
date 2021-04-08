@@ -27,3 +27,6 @@ git clone https://github.com/tna76874/hdhweg-homeschooling-stack.git ${REPODIR} 
 cd ${REPODIR}
 sudo cp vars.yml.example vars.yml
 sudo cp inventory.example inventory
+
+# install galaxy roles
+ansible-galaxy install -r requirements.yml
