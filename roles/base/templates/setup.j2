@@ -45,12 +45,13 @@ pull_repo() {
 }
 
 #perform restic backup
-restic_backup() {
+function restic_backup() {
   export RESTIC_REPOSITORY="/restic/backup"
   export RESTIC_PASSWORD_FILE="/root/RESTIC_PASSWORD"
 
   /snap/bin/restic "$@"
 }
+export -f restic_backup
 
 #Usage print
 usage() {
