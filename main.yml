@@ -1,7 +1,6 @@
 ---
 - name: Basic Setup
-  hosts: localhost
-  connection: local 
+  hosts: all
   become: yes
   tags:
     - base
@@ -15,8 +14,7 @@
     - ubuntu-unattended-upgrades
 
 - name: Rocketchat
-  hosts: localhost
-  connection: local 
+  hosts: all
   become: yes
   vars_files:
     - vars.yml
@@ -34,8 +32,7 @@
     - rocket
 
 - name: Whiteboard
-  hosts: localhost
-  connection: local 
+  hosts: all
   become: yes
   vars_files:
     - vars.yml
@@ -49,8 +46,7 @@
     - whiteboard
 
 - name: Jitsi
-  hosts: localhost
-  connection: local 
+  hosts: all
   become: yes
   tags:
     - jitsi
@@ -66,8 +62,7 @@
     - tna76874.ansible_docker_jitsi
 
 - name: Cryptpad
-  hosts: localhost
-  connection: local 
+  hosts: all 
   become: yes
   vars_files:
     - vars.yml
@@ -81,8 +76,7 @@
     - cryptpad
 
 - name: Mumble
-  hosts: localhost
-  connection: local
+  hosts: all
   become: yes
   vars_files:
     - vars.yml
@@ -96,8 +90,7 @@
     - mumble
 
 - name: Collabora
-  hosts: localhost
-  connection: local
+  hosts: all
   become: yes
   vars_files:
     - vars.yml
@@ -113,8 +106,7 @@
 - name: Deploy mailserver
   collections:
     - community.docker
-  hosts: localhost
-  connection: local
+  hosts: all
   become: yes
   tags:
     - mail
@@ -130,16 +122,8 @@
     - docker
     - mailserver
 
-- name: Ensure restic
-  hosts: all
-  become: yes
-  tags: restic
-  roles:
-    - restic
-
 - name: Secure the ssh server
-  hosts: localhost
-  connection: local
+  hosts: all
   become: yes
   vars_files:
     - vars.yml
@@ -150,8 +134,7 @@
     - security
 
 - name: Perform backup
-  hosts: localhost
-  connection: local
+  hosts: all
   become: yes
   vars:
     restic_to_backup: /srv

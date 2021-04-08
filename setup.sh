@@ -17,6 +17,7 @@ export REPODIR="/root/hdhweg-homeschooling-stack"
 export EXE="/usr/local/bin/setup.sh"
 export SCRIPT=$(readlink -f "$0")
 
+###### Some functions
 # installing requirements
 installing_requirements() {
     echo -e "... update system sources, install ansible and git ... [this could take a few minutes now, depending on your internet connection]"
@@ -42,6 +43,27 @@ pull_repo() {
     ansible-galaxy install -r requirements.yml --force > /dev/null 2>&1 && echo "... updated galaxy packages ..."
 }
 
+#perform restic backup
+restic_backup() {
+  export RESTIC_REPOSITORY="/restic/backup"
+  export RESTIC_PASSWORD_FILE="/root/RESTIC_PASSWORD"
+
+  /snap/bin/restic "$@"
+}
+
+#Usage print
+usage() {
+    echo "Usage: $0 [-t TAG] [-b]" >&2
+    echo "
+    OPTIONS
+    -t [TAG],     run playbook with given tag. Check README.md
+    -b,           run restic backup operations. e.g. $0 -b backup /srv
+   ">&2
+    exit 1
+}
+
+###### Run routines
+
 # checking for required packages
 git version > /dev/null 2>&1 && ansible-playbook -h > /dev/null 2>&1 || installing_requirements
 
@@ -64,10 +86,13 @@ if [ ! -f "$EXE" ]; then
     sudo chmod 775 ${EXE}
 fi
 
-# processing args
+###### processing args
+
 while [ $# -gt 0 ] ; do
   case $1 in
     -t | --tag | tag) sudo ansible-playbook ${REPODIR}/main.yml -t base,"$2" ;;
+    -b | --backup | backup) sudo restic_backup "$2" ;;
+    -h | --help | help) usage ;;
   esac
   shift
 done
