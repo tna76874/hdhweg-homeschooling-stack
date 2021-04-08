@@ -93,7 +93,7 @@ fi
 while [ $# -gt 0 ] ; do
   case $1 in
     -t | --tag | tag) cd ${REPODIR}; sudo ansible-playbook main.yml -t base,"$2" ;;
-    -b | --backup | backup) sudo restic_backup "$2" ;;
+    -b | --backup | backup) restic_backup "$2" ;;
     -h | --help | help) usage ;;
   esac
   shift
