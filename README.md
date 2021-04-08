@@ -42,6 +42,10 @@ wget -qO setup.sh https://raw.githubusercontent.com/tna76874/hdhweg-homeschoolin
 
 **Remove the ssh-keys inside the file `vars.yml` to prevent ssh access of the listed users.** 
 
+```bash
+nano /root/hdhweg-homeschooling-stack/vars.yml
+```
+
 Set the variable `letsencrypt_email` to your mailadress. You don't want your students to have bad warning messages on your nice websites once your letsencrypt certificates expired.
 
 Set `collabora_domain` to the domain your collabora server should serve its content to, e.g. `moodle.myschool.xyz`.
@@ -67,7 +71,7 @@ $ sudo ansible-playbook main.yml
 Now you can set-up the different apps to your needs:
 
 ```bash
-sudo ansible-playbook /root/hdhweg-homeschooling-stack/main.yml -t [TAG]
+setup.sh -t [TAG]
 ```
 
 Available tags:
@@ -75,7 +79,6 @@ Available tags:
 * [rocketchat](https://github.com/tna76874/hdhweg-homeschooling-stack/blob/master/docs/ROCKET.md) 
 *  [jitsi](https://github.com/tna76874/hdhweg-homeschooling-stack/blob/master/docs/JITSI.md) 
 * [mail](https://github.com/tna76874/hdhweg-homeschooling-stack/blob/master/docs/MAIL.md) 
-
 * whiteboard
 * cryptpad
 * mumble
