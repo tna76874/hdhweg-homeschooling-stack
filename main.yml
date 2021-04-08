@@ -63,7 +63,7 @@
     project_root: /srv/jitsi
   roles:
     - nginx-tls-add
-    - jitsi
+    - tna76874.ansible_docker_jitsi
 
 - name: Cryptpad
   hosts: all

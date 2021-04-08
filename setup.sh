@@ -39,7 +39,7 @@ pull_repo() {
 
     # install galaxy roles
     cd ${REPODIR}
-    ansible-galaxy install -r requirements.yml  > /dev/null 2>&1 && echo "... updated galaxy packages ..."
+    ansible-galaxy install -r requirements.yml --force > /dev/null 2>&1 && echo "... updated galaxy packages ..."
 }
 
 # checking for required packages
