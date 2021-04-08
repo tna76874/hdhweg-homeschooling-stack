@@ -62,13 +62,7 @@ Set `main_domain` to the domain that points at your VM. Be sure, that the follow
 
 ### Run
 
-Run the playbook to ensure basic settings of  your server.
-
-```
-$ sudo ansible-playbook main.yml
-```
-
-Now you can set-up the different apps to your needs:
+Now you can set-up the different apps to your needs.  Multiple tags can be appended, e.g. `-t jitsi,mail`.
 
 ```bash
 setup.sh -t [TAG]
