@@ -35,10 +35,10 @@ installing_requirements() {
 # pulling repo and updating content
 pull_repo() {
     # pulling latest changes
-    sudo git -C ${REPODIR} pull  > /dev/null 2>&1
+    sudo git -C ${REPODIR} pull  > /dev/null 2>&1 && echo "... updated git repo ..."
 
     # install galaxy roles
-    ansible-galaxy install -r ${REPODIR}/requirements.yml  > /dev/null 2>&1
+    ansible-galaxy install -r ${REPODIR}/requirements.yml  > /dev/null 2>&1 && echo "... updated galaxy packages ..."
 }
 
 # checking for required packages
@@ -51,9 +51,10 @@ if [ ! -d "$REPODIR" ]; then
     sudo cp ${REPODIR}/vars.yml.example ${REPODIR}/vars.yml
     sudo cp ${REPODIR}/inventory.example ${REPODIR}/inventory
     echo -e "Edit variables now with:\nnano ${REPODIR}/vars.yml"
-else
-    pull_repo
 fi
+
+# updating repo
+pull_repo
 
 # checking if script is deployed on system
 if [ ! -f "$EXE" ]; then
