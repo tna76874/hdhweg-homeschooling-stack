@@ -12,8 +12,8 @@ fi
 source /etc/lsb-release
 
 # setting the location of the ansible playbook repository
-export GITREPO="https://github.com/tna76874/hdhweg-homeschooling-stack.git"
-export REPODIR="/root/hdhweg-homeschooling-stack"
+export GITREPO="{{ config_git_repo }}"
+export REPODIR="{{ config_repo_dir }}"
 export EXE="/usr/local/bin/setup.sh"
 export SCRIPT=$(readlink -f "$0")
 

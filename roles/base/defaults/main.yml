@@ -1,0 +1,5 @@
+---
+# gitrepo url
+config_git_repo: 'https://github.com/tna76874/hdhweg-homeschooling-stack.git'
+# local repo dir
+config_repo_dir: '/root/hdhweg-homeschooling-stack'

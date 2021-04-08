@@ -126,4 +126,13 @@
     - "dockerexport.sh"
     - "backup.sh"
 
+- name: Ensure setup script
+  template:
+    src: "{{ item.file }}"
+    dest: "{{ item.destination }}"
+    owner: "{{ item.owner }}"
+    mode: "{{ item.mode }}"
+  loop:
+    - { file: "setup.j2", destination: "/usr/local/bin/setup.sh", owner: "root", mode: "0775" }
+
 - import_tasks: firewall.yml
