@@ -38,7 +38,8 @@ pull_repo() {
     sudo git -C ${REPODIR} pull  > /dev/null 2>&1 && echo "... updated git repo ..."
 
     # install galaxy roles
-    ansible-galaxy install -r ${REPODIR}/requirements.yml  > /dev/null 2>&1 && echo "... updated galaxy packages ..."
+    cd ${REPODIR}
+    ansible-galaxy install -r requirements.yml  > /dev/null 2>&1 && echo "... updated galaxy packages ..."
 }
 
 # checking for required packages
