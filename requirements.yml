@@ -1,4 +1,4 @@
 ---
 roles:
   - name: tna76874.ansible_docker_jitsi
-    version: 0.1
+    version: 0.2
